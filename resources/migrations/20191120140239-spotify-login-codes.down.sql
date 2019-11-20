@@ -1,0 +1,1 @@
+DROP TABLE spotify_login_codes;

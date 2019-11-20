@@ -1,0 +1,7 @@
+(migratus/create config "create-user")
+exit
+[migratus-lein "0.5.2"]
+(migratus/create config "create-user")
+exit
+(migratus/create config "create-user")
+exit

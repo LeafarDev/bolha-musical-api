@@ -1,0 +1,1 @@
+drop table referencias_tamanhos_bolhas;
