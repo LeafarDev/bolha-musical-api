@@ -3,6 +3,7 @@
             [environ.core :refer [env]]
             [ring.util.http-response :refer :all]
             [schema.core :as s]))
+
 (def database-url
   (env :database-url))
 
