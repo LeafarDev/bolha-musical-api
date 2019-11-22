@@ -1,0 +1,16 @@
+version: '2'
+
+services:
+  mysql:
+    image: 'bitnami/mysql:5.7'
+    ports:
+      - '4442:3306'
+    volumes:
+      - 'mysql_data:/home/rafael/volumes/bolha/mysql/data'
+    environment:
+      # ALLOW_EMPTY_PASSWORD is recommended only for development.
+      - MYSQL_ROOT_PASSWORD=123456
+
+volumes:
+  mysql_data:
+    driver: local
