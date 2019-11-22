@@ -1,2 +1,4 @@
 .lein-env
 .profiles.clj
+profiles\.clj
+/.idea/
