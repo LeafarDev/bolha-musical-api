@@ -1,7 +1,9 @@
 (ns bolha-musical-api.routes.spotify
   (:require [compojure.api.sweet :refer :all]
-            [bolha-musical-api.route_functions.spotify.login_codigo :as lc]
+            [bolha-musical-api.route_functions.spotify.criar-login-codigo :as rfclc]
             [bolha-musical-api.route_functions.users.spotify-callback :as usercriacao]
+            [bolha-musical-api.route_functions.users.troca-state-por-token :as rfutspt]
+            [bolha-musical-api.middleware.spotify_refresh_token :refer [sptfy-refresh-tk-mw]]
             [ring.util.http-response :refer :all]
             [bolha-musical-api.middleware.token-auth :refer [token-auth-mw]]
             [bolha-musical-api.middleware.cors :refer [cors-mw]]
@@ -24,11 +26,15 @@
     (GET "/spotify/login/codigo/novo" []
       :return {:codigo java.lang.String}
       :summary "Retorna um código para o client pode logar no spotify"
-      (ok {:codigo (lc/criar-novo-codigo-de-login)}))
+      (rfclc/criar-novo-codigo-de-login))
     (GET "/spotify/login/callback" []
       :query-params [code :- String, state :- String]
       :summary "Recebe o callback do spotify e retorna o usuário se tudo estiver certo"
       (usercriacao/tratar-usuario-spotify-callback code state))
-    (GET "/spotify/teste/token" []
-      :middleware [token-auth-mw cors-mw authenticated-mw]
-      (ok (str "Parece que seu token ta suave")))))
+    (GET "/spotify/state/trocar/token" []
+      :query-params [state]
+      ; :middleware [token-auth-mw cors-mw authenticated-mw]
+      (rfutspt/get-token state))
+    (GET "/spotify/refresh/teste" []
+      :middleware [sptfy-refresh-tk-mw]
+      (ok (str "check u privileges")))))

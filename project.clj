@@ -7,6 +7,7 @@
                  [clj-spotify "0.1.9"]
                  [clj-time "0.15.2"]
                  [buddy "2.0.0"]
+                 [try-let "1.3.1"]
                  [mysql/mysql-connector-java "8.0.17"]
                  [seancorfield/next.jdbc "1.0.10"]
                  [metosin/compojure-api "2.0.0-alpha30"]

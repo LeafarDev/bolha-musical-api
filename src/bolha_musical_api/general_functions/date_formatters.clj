@@ -4,6 +4,15 @@
    [clj-time.local :as l]
    [clj-time.format :as f]))
 
+(def multi-format
+  (f/formatter t/utc
+               "YYYY-MM-dd"
+               "yyyy-MM-dd H:mm:ss"
+               "YYYY-MM-dd'T'HH:mm:ss.SSSZ"))
+
+(defn parse [s]
+  (f/parse multi-format s))
+
 (defn parse-mysql-date-time-format
   [date]
   (clj-time.format/unparse (clj-time.format/formatter "yyyy-MM-dd H:mm:ss") date))
@@ -19,3 +28,11 @@
 (defn segundos-para-minutos
   [segundos]
   (/ segundos 60))
+
+(defn date-greater?
+  [date1, date2]
+  (= date1 (t/latest date1 date2)))
+
+(defn intervalo-minutos
+  [date1 date2]
+  (t/in-minutes (t/interval date1 date2)))

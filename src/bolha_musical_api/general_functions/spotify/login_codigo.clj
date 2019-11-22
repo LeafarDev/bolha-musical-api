@@ -1,4 +1,4 @@
-(ns bolha-musical-api.route_functions.spotify.login_codigo
+(ns bolha-musical-api.general_functions.spotify.login_codigo
   (:require [bolha-musical-api.general_functions.date-formatters :as df]
             [bolha-musical-api.query_defs :as query]))
 
@@ -20,7 +20,16 @@
     (codigo_data :id)
     false))
 
-;(defn checkin-codigo-de-login
-;  "Recebo código de login do spotify e processo as informações no usuário"
-;  ())
+(defn verifica-codigo-eh-trocavel-por-token
+  "Pego um codigo e busco no banco onde ele tem token e não foi checkado ainda"
+  [state]
+  (if-let [codigo_data (not-empty (query/busca-codigo-trocavel-por-token query/db {:id state :agora (df/nowMysqlFormat)}))]
+    (codigo_data :id)
+    false))
 
+(defn checkar-codigo
+  "Marca o codigo como já utilizado"
+  [state]
+  (if-let [insert-result (= 1 (query/update-codigo-checado query/db {:id state :agora (df/nowMysqlFormat)}))]
+    true
+    false))
