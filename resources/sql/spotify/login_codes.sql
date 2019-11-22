@@ -1,6 +1,5 @@
--- :name criar-novo-codigo-de-login
+-- :name criar-novo-codigo-de-login :! :n
 -- :command :insert
--- :result :raw
 -- :doc insere uma linha em spotify_login_codes como um novo uuid() para que o usuário possa utiliza esse código pra logar com spotify
 insert into spotify_login_codes (id , expires_at, created_at)
 values (:id, :expires_at, :created_at);

@@ -1,8 +1,11 @@
 (ns bolha-musical-api.routes.spotify
   (:require [compojure.api.sweet :refer :all]
             [bolha-musical-api.route_functions.spotify.login_codigo :as lc]
-            [bolha-musical-api.route_functions.users.user_criacao :as usercriacao]
+            [bolha-musical-api.route_functions.users.spotify-callback :as usercriacao]
             [ring.util.http-response :refer :all]
+            [bolha-musical-api.middleware.token-auth :refer [token-auth-mw]]
+            [bolha-musical-api.middleware.cors :refer [cors-mw]]
+            [bolha-musical-api.middleware.authenticated :refer [authenticated-mw]]
             [schema.core :as s]))
 
 (s/defschema SpotifyCallBackSchema
@@ -25,4 +28,7 @@
     (GET "/spotify/login/callback" []
       :query-params [code :- String, state :- String]
       :summary "Recebe o callback do spotify e retorna o usuário se tudo estiver certo"
-      (ok (usercriacao/criar-usuario-spotify-callback code state)))))
+      (usercriacao/tratar-usuario-spotify-callback code state))
+    (GET "/spotify/teste/token" []
+      :middleware [token-auth-mw cors-mw authenticated-mw]
+      (ok (str "Parece que seu token ta suave")))))

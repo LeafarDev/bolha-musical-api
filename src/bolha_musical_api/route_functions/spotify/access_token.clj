@@ -10,10 +10,14 @@
   token by making a POST request to the Spotify Accounts service, this time to
    its /api/token endpoint: POST "
   [code]
-  (-> "https://accounts.spotify.com/api/token"
-      (client/post {:form-params {:grant_type "authorization_code"
-                                  :redirect_uri spotify-redirect-uri-encoded
-                                  :code       code}
-                    :headers {:Authorization spotify-auth-encoded}
-                    :as          :json})
-      :body))
+  (try
+    (-> "https://accounts.spotify.com/api/token"
+        (client/post {:form-params {:grant_type   "authorization_code"
+                                    :redirect_uri spotify-redirect-uri-encoded
+                                    :code         code}
+                      :headers     {:Authorization spotify-auth-encoded}
+                      :as          :json})
+        :body)
+    (catch Exception e (log/error e "There was an error in get-access-token-client"))))
+
+(get-access-token-client "dd")
