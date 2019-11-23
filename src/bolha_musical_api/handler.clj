@@ -1,7 +1,7 @@
 (ns bolha-musical-api.handler
   (:require [compojure.api.sweet :refer :all]
             [bolha-musical-api.routes.spotify :refer :all]
-            [bolha-musical-api.routes.pizza :refer :all]
+            [bolha-musical-api.routes.user :refer :all]
             [ring.util.http-response :refer :all]
             [schema.core :as s]))
 
@@ -14,5 +14,5 @@
                    :description "Compojure Api example"}
             :tags [{:name "api", :description "some apis"}]}}}
 
-   pizza
+   user
    spotify))

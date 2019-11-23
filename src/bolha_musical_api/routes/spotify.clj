@@ -13,12 +13,6 @@
 (s/defschema SpotifyCallBackSchema
   {:code  s/Str
    :state s/Str})
-(defn logme
-  "docstring"
-  [code state]
-  (print (str code state))
-  {:code  code
-   :state state})
 
 (def spotify
   (context "/api" []
@@ -33,7 +27,7 @@
       (usercriacao/tratar-usuario-spotify-callback code state))
     (GET "/spotify/state/trocar/token" []
       :query-params [state]
-      ; :middleware [token-auth-mw cors-mw authenticated-mw]
+      ; :middleware [token-auth-mw cors-mw authenticated-mw sptfy-refresh-tk-mw]
       (rfutspt/get-token state))
     (GET "/spotify/refresh/teste" []
       :middleware [sptfy-refresh-tk-mw]
