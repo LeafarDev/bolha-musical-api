@@ -7,10 +7,8 @@
             [bolha-musical-api.general-functions.user.create-token :as ct]
             [bolha-musical-api.general_functions.spotify.login_codigo :as gflg]))
 
-
-
 (defn me
   [request]
   (try-let [token-data (sat/extract-token-data (sat/extract-token request))
             user (gfuser/get-user-by-email (:email token-data))]
-    (ok (sptfy/get-current-users-profile {} (:spotify_access_token user)))))
+           (ok (sptfy/get-current-users-profile {} (:spotify_access_token user)))))

@@ -14,7 +14,10 @@ FIXME
 lein do clean, ring uberjar
 java -jar target/server.jar
 ```
-
+### Kibit
+`lein kibit --replace`
+### Cljfmt
+`lein cljfmt fix`
 ### Packaging as war
 
 `lein ring uberwar`

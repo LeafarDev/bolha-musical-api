@@ -14,6 +14,7 @@
                  [environ "1.1.0"]]
   :plugins [[lein-environ "1.1.0"]
             [lein-cljfmt "0.6.5"]
+            [lein-kibit "0.1.8"]
             [lein-ring "0.12.5"]
             [migratus-lein "0.5.2"]]
   :ring {:handler bolha-musical-api.handler/app}
