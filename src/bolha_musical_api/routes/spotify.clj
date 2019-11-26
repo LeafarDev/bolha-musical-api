@@ -18,7 +18,7 @@
   (context "/api" []
     :tags ["api"]
     (GET "/spotify/login/codigo/novo" []
-      :return {:codigo java.lang.String}
+      ; :return {:id java.lang.String :expires_at java.lang.String :created_at String}
       :summary "Retorna um código para o client pode logar no spotify"
       (rfclc/criar-novo-codigo-de-login))
     (GET "/spotify/login/callback" []

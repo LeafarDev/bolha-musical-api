@@ -2,17 +2,6 @@
   (:require [bolha-musical-api.general_functions.date-formatters :as df]
             [bolha-musical-api.query_defs :as query]))
 
-(defn criar-novo-codigo-de-login
-  "Cria um uuid no banco e o retorna"
-  []
-  (let [novo-codigo-login (str (java.util.UUID/randomUUID))]
-    (query/criar-novo-codigo-de-login
-     query/db
-     {:id         novo-codigo-login
-      :expires_at (df/parse-mysql-date-time-format (df/agora-add-minutos 15))
-      :created_at (df/nowMysqlFormat)})
-    novo-codigo-login))
-
 (defn state-valido-em-callback?
   "Recebo um código e verifico se é válido para ser utilizado no callback"
   [state]
