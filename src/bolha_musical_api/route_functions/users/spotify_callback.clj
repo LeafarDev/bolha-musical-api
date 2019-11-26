@@ -6,12 +6,7 @@
             [bolha-musical-api.general_functions.user.user :as gfuser]
             [environ.core :refer [env]]
             [clojure.set :refer :all]))
-(filter
- even?
- (range 1 10))
-(filter
- even?
- (range 1 10))
+
 (defn- junta-dados-state
   [state dados]
   (conj {:spotify_last_state state} dados))

@@ -1,34 +1,30 @@
 # bolha-musical-api
 
-FIXME
-
+Api da bolhamusical, uma rede social para pessoas próximas compartilharem suas experiências musicais.
 ## Usage
 
-### Run the application locally
+### Rodando a aplicação local
 
 `lein ring server`
 
-### Packaging and running as standalone jar
-
+### Rodando como jar
 ```
 lein do clean, ring uberjar
 java -jar target/server.jar
 ```
-### Kibit
+### Kibit para para tornar o código mais idiomático
 `lein kibit --replace`
-### Cljfmt
+### Cljfmt para formatar seu código
 `lein cljfmt fix`
-### Packaging as war
-
+### Gerando o war
 `lein ring uberwar`
-### Create Migrations
+### Crie migrations com o Migratus
 ```
 lein migratus create "spotify-login-code"
 ```
-### Run migrations
+### Execute migrations com o Miratus
 ```
 lein migratus migrate && lein with-profile test migratus migrate
 ```
-## License
-
-Copyright ©  FIXME
+## Licença
+MIT
