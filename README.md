@@ -1,7 +1,6 @@
 # bolha-musical-api
 
-Api da bolhamusical, uma rede social para pessoas próximas compartilharem suas experiências musicais.
-## Usage
+Api da Bolha Musical, uma rede social para pessoas próximas compartilharem suas experiências musicais.
 
 ### Rodando a aplicação local
 
