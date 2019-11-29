@@ -1,8 +1,8 @@
 (ns bolha-musical-api.routes.spotify
   (:require [compojure.api.sweet :refer :all]
             [bolha-musical-api.route_functions.spotify.criar-login-codigo :as rfclc]
-            [bolha-musical-api.route_functions.users.spotify-callback :as usercriacao]
-            [bolha-musical-api.route_functions.users.troca-state-por-token :as rfutspt]
+            [bolha-musical-api.route_functions.user.spotify-callback :as usercriacao]
+            [bolha-musical-api.route_functions.user.troca-state-por-token :as rfutspt]
             [bolha-musical-api.middleware.spotify_refresh_token :refer [sptfy-refresh-tk-mw]]
             [ring.util.http-response :refer :all]
             [bolha-musical-api.middleware.token-auth :refer [token-auth-mw]]

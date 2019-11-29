@@ -39,3 +39,11 @@ set spotify_access_token     = :spotify_access_token,
     spotify_scope            = :spotify_scope,
     spotify_token_expires_at = :spotify_token_expires_at
 where id = :id;
+
+-- :name update-user-localizacao-atual :! :n
+-- :command :update
+-- :doc Atualiza localicação atual do usuário
+update users
+set ultima_localizacao     = GeomFromText(:point),
+    data_ultima_localizacao            = :agora
+where id = :id;

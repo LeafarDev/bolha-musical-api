@@ -2,6 +2,7 @@
   (:require [compojure.api.sweet :refer :all]
             [bolha-musical-api.routes.spotify :refer :all]
             [bolha-musical-api.routes.user :refer :all]
+            [bolha-musical-api.routes.bolha :refer :all]
             [ring.util.http-response :refer :all]
             [schema.core :as s]))
 
@@ -15,4 +16,5 @@
             :tags [{:name "api", :description "some apis"}]}}}
 
    user
-   spotify))
+   spotify
+   bolha))
