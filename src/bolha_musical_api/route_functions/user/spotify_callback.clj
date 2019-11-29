@@ -1,4 +1,4 @@
-(ns bolha-musical-api.route_functions.users.spotify-callback
+(ns bolha-musical-api.route_functions.user.spotify-callback
   (:require [clj-spotify.core :as sptfy]
             [bolha-musical-api.general_functions.spotify.access_token :as sat]
             [bolha-musical-api.general_functions.spotify.login_codigo :as gflg]

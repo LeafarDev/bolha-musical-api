@@ -12,12 +12,12 @@
 (defn- callRefresh
   [user handler request]
   (if (not= false sat/handle-user-spotify-refresh-token user)
-    (handler request)
+    (internal-server-error (sat/handle-user-spotify-refresh-token user))
     (internal-server-error {:message "Impossivel atualizar token do usuário"})))
 
 (defn- falta-cinco-minutos-ou-menos?
   [spotify_token_expires_at]
-  (<= 5 (df/intervalo-minutos (l/local-now) spotify_token_expires_at)))
+  (>= 5 (df/intervalo-minutos (l/local-now) spotify_token_expires_at)))
 
 (defn- ja-expirou?
   [spotify_token_expires_at]

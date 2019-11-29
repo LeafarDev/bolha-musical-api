@@ -1,4 +1,4 @@
-(ns bolha-musical-api.route_functions.users.troca-state-por-token
+(ns bolha-musical-api.route_functions.user.troca-state-por-token
   (:require [ring.util.http-response :refer :all]
             [bolha-musical-api.general_functions.user.user :as gfuser]
             [bolha-musical-api.general-functions.user.create-token :as ct]
