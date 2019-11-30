@@ -14,6 +14,19 @@ services:
       - MYSQL_PASSWORD=123456
     ports:
       - "4442:3306"
+  mysql-test:
+    image: mysql:5.7
+    container_name: bolha_musical-mysql-test
+    working_dir: /application
+    volumes:
+      - .:/application
+    environment:
+      - MYSQL_ROOT_PASSWORD=123456
+      - MYSQL_DATABASE=bolha_musical
+      - MYSQL_USER=bolha_musical
+      - MYSQL_PASSWORD=123456
+    ports:
+      - "4443:3306"
   redis:
     image: redis:alpine
     container_name: bolha-redis

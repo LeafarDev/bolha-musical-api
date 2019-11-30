@@ -19,15 +19,17 @@
             [lein-ring "0.12.5"]
             [migratus-lein "0.5.2"]]
   :ring {:handler bolha-musical-api.handler/app}
-  :migratus {:store :database
+  :migratus {:store         :database
              :migration-dir "migrations"
-             :db ~(get (System/getenv) "DATABASE_URL")}
+             :db            ~(get (System/getenv) "DATABASE_URL")}
   :uberjar-name "server.jar"
   :profiles {
              ;; Set these in ./profiles.clj
              :test-env-vars {}
              :dev-env-vars  {}
-             :dev [{:dependencies [[javax.servlet/javax.servlet-api "3.1.0"]]}
-                   :dev-env-vars]
+             :test          [:test-env-vars]
+             :dev           [{:dependencies [[javax.servlet/javax.servlet-api "3.1.0"]]}
+                             :dev-env-vars]
              }
-  )
+  :test-selectors {:default (constantly true)
+                   :wip     :wip})
