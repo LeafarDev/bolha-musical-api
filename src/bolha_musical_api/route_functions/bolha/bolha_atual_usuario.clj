@@ -20,4 +20,4 @@
            (ok (conj bolha {:membros membros-bolha-com-me}))
            (catch Exception e
              (log/error e)
-             (bad-request! {:message "Não foi possivel atualizar a localização ,tente novamente mais tarde"}))))
+             (internal-server-error! {:message "Não foi possivel buscar a bolha do usuário, tente novamente mais tarde"}))))
