@@ -9,7 +9,7 @@
             [bolha-musical-api.route_functions.bolha.bolha-atual-usuario :as gfbau]
             [bolha-musical-api.route_functions.bolha.bolhas_disponiveis :as gfbp]))
 (def bolha
-  (context "/api/spotify/bolhas" request
+  (context "/api/v1/spotify/bolhas" request
     :tags ["api"]
     (GET "/disponiveis" []
       :summary "Busca bolhas no alcance da localização atual do usuário logado"

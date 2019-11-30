@@ -15,20 +15,20 @@
    :state s/Str})
 
 (def spotify
-  (context "/api" []
+  (context "/api/v1/spotify" []
     :tags ["api"]
-    (GET "/spotify/login/codigo/novo" []
+    (GET "/login/codigo/novo" []
       ; :return {:id java.lang.String :expires_at java.lang.String :created_at String}
       :summary "Retorna um código para o client pode logar no spotify"
       (rfclc/criar-novo-codigo-de-login))
-    (GET "/spotify/login/callback" []
+    (GET "/login/callback" []
       :query-params [code :- String, state :- String]
       :summary "Recebe o callback do spotify e retorna o usuário se tudo estiver certo"
       (usercriacao/tratar-usuario-spotify-callback code state))
-    (GET "/spotify/state/trocar/token" []
+    (GET "/state/trocar/token" []
       :query-params [state]
       ; :middleware [token-auth-mw cors-mw authenticated-mw sptfy-refresh-tk-mw]
       (rfutspt/get-token state))
-    (GET "/spotify/refresh/teste" []
+    (GET "/refresh/teste" []
       :middleware [sptfy-refresh-tk-mw]
       (ok (str "check u privileges")))))

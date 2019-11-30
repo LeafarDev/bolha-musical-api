@@ -14,7 +14,7 @@
    :longitude s/Num})
 
 (def user
-  (context "/api/users" []
+  (context "/api/v1/users" []
     :tags ["api"]
     (GET "/me" request
       :middleware [token-auth-mw cors-mw authenticated-mw sptfy-refresh-tk-mw]
