@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS referencias_tamanhos_bolhas
 (
     id         int PRIMARY KEY NOT NULL AUTO_INCREMENT,
-    raio float default 100,
+    raio_metros float default 100,
     min int null,
     max int null,
     deleted_at TIMESTAMP       null,

@@ -2,7 +2,7 @@
                        :spotify-client-id ""
                        :spotify-client-secret ""
                        :spotify-auth-encoded ""
-                       :spotify-redirect-uri "http://localhost:3001/api/spotify/login/callback"
+                       :spotify-redirect-uri "http://10.0.0.108:3001:3001/api/v1/spotify/login/callback"
                        :sendinblue-user-login    "You@Something.com"
                        :sendinblue-user-password "sendinblue"
                        :auth-key      "theSecretKeyUsedToCreateAndReadTokens"}}

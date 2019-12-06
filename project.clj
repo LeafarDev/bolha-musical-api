@@ -28,7 +28,8 @@
              :test-env-vars {}
              :dev-env-vars  {}
              :test          [:test-env-vars]
-             :dev           [{:dependencies [[javax.servlet/javax.servlet-api "3.1.0"]]}
+             :dev           [{:dependencies   [[javax.servlet/javax.servlet-api "3.1.0"]]
+                              :resource-paths ["resources"]}
                              :dev-env-vars]
              }
   :test-selectors {:default (constantly true)

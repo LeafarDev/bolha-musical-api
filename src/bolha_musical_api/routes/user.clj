@@ -2,7 +2,7 @@
   (:require [compojure.api.sweet :refer :all]
             [ring.util.http-response :refer :all]
             [schema.core :as s]
-            [bolha-musical-api.route_functions.user.set-localizacao-atual :as gfsla]
+            [bolha-musical-api.route_functions.user.set-localizacao-atual :as rfsla]
             [bolha-musical-api.middleware.token-auth :refer [token-auth-mw]]
             [bolha-musical-api.middleware.cors :refer [cors-mw]]
             [bolha-musical-api.middleware.authenticated :refer [authenticated-mw]]
@@ -23,4 +23,4 @@
       :middleware [token-auth-mw cors-mw authenticated-mw sptfy-refresh-tk-mw]
       :body [localizacao LocalizacaoSchema]
       :summary "Recebo a localização atual do usuário e salvo no banco"
-      (gfsla/set-localizacao-atual request))))
+      (rfsla/set-localizacao-atual request))))

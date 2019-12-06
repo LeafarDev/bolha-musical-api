@@ -14,10 +14,12 @@
   [request]
   (try-let [token-data (sat/extract-token-data (sat/extract-token request))
             user (gfuser/get-user-by-email (:email token-data))
-            bolha (not-empty (query/busca-bolha-atual-usuario query/db {:user_id (:id user)}))
-            membros-bolha (not-empty (query/busca-membros-bolha query/db {:bolha_id (:id bolha)}))
-            membros-bolha-com-me (map #(conj % {:me (sptfy/get-current-users-profile {} (:spotify_access_token user))}) membros-bolha)]
-           (ok (conj bolha {:membros membros-bolha-com-me}))
+            bolha (query/get-bolha-atual-usuario query/db {:user_id (:id user)})]
+           (if (not-empty bolha)
+             (let [membros-bolha (not-empty (query/busca-membros-bolha query/db {:bolha_id (:id bolha)}))
+                   membros-bolha-com-me (map #(conj % {:me (sptfy/get-current-users-profile {} (:spotify_access_token user))}) membros-bolha)]
+               (ok (conj bolha {:membros membros-bolha-com-me})))
+             (not-found! {:message "Usuário não está em uma bolha"}))
            (catch Exception e
              (log/error e)
              (internal-server-error! {:message "Não foi possivel buscar a bolha do usuário, tente novamente mais tarde"}))))

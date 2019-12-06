@@ -1,4 +1,18 @@
--- :name busca-bolha-atual-usuario
+-- :name get-bolha-by-id
+-- :command :select
+-- :result :one
+-- :doc Busca bolha pelo seu id
+select bolhas.*,
+   St_x(bolhas.referencia_raio_fixo)       as latitude,
+   St_y(bolhas.referencia_raio_fixo)       as longitude,
+   referencias_tamanhos_bolhas.raio_metros as raio
+from   bolhas
+   join referencias_tamanhos_bolhas
+     on referencias_tamanhos_bolhas.id = bolhas.tamanho_bolha_referencia_id
+where  bolhas.deleted_at is null and bolhas.id = :id
+limit  0, 1;
+
+-- :name get-bolha-atual-usuario
 -- :command :select
 -- :result :one
 -- :doc Busca bolha que o usuário está atualmente participando
@@ -15,6 +29,19 @@ from   bolhas
    join referencias_tamanhos_bolhas
      on referencias_tamanhos_bolhas.id = bolhas.tamanho_bolha_referencia_id
 where  bolhas.deleted_at is null
+limit  0, 1;
+-- :name get-bolha-by-referencia
+-- :command :select
+-- :result :one
+-- :doc Busca bolha que o usuário está atualmente participando
+select bolhas.*,
+   St_x(bolhas.referencia_raio_fixo)       as latitude,
+   St_y(bolhas.referencia_raio_fixo)       as longitude,
+   referencias_tamanhos_bolhas.raio_metros as raio
+from   bolhas
+   join referencias_tamanhos_bolhas
+     on referencias_tamanhos_bolhas.id = bolhas.tamanho_bolha_referencia_id
+where  bolhas.deleted_at is null and bolhas.referencia = :referencia
 limit  0, 1;
 -- :name bolhas-disponiveis
 -- :command :select
@@ -39,6 +66,10 @@ from   users,
      on referencias_tamanhos_bolhas.id = bolhas.tamanho_bolha_referencia_id
 where  users.id = :user_id
 having distancia_metros <= referencias_tamanhos_bolhas.raio_metros
-/* 300 metros*/
 order  by distancia_metros
 limit  0, 30;
+-- :name criar-bolha-fixa :insert :raw
+-- :command :insert
+-- :doc Insere uma bolha fixa
+insert into bolhas (referencia, apelido ,  eh_fixa, referencia_raio_fixo, tamanho_bolha_referencia_id, user_lider_id)
+values (:referencia, :apelido ,  1, GeomFromText(:referencia_raio_fixo), 1, :user_id);

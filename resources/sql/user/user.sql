@@ -2,14 +2,18 @@
 -- :command :select
 -- :result :one
 -- :doc Busca usuário pelo seu email
-select * from users
+select *,
+    St_x(ultima_localizacao) as latitude,
+    St_y(ultima_localizacao) as longitude from users
 where  email = :email;
 
 -- :name get-user-by-state
 -- :command :select
 -- :result :one
 -- :doc Busca usuário pelo seu state
-select * from users
+select *,
+    St_x(ultima_localizacao) as latitude,
+    St_y(ultima_localizacao) as longitude from users
 where  spotify_last_state = :state;
 
 -- :name insert-user-spotify-callback :! :n

@@ -14,3 +14,16 @@ FROM   bolhas_membros
 WHERE  bolhas_membros.bolha_id = :bolha_id
        AND bolhas_membros.deleted_at IS NULL
        AND bolhas_membros.checkout IS NULL
+
+-- :name insert-membro-bolha :! :n
+-- :command :insert
+-- :doc Insiro um usuário como membro em uma bolha
+insert into bolhas_membros (bolha_id ,  user_id, checkin)
+values (:bolha_id ,  :user_id, :checkin);
+
+-- :name remove-usuario-bolha :! :n
+-- :command :insert
+-- :doc Tiro o usuário de qualquer bolha que esteja
+update bolhas_membros
+set checkout = :checkout
+where user_id = :user_id and checkout is null

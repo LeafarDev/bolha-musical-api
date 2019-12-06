@@ -12,7 +12,7 @@
   [request]
   (try-let [token-data (sat/extract-token-data (sat/extract-token request))
             user (gfuser/get-user-by-email (:email token-data))
-            bolhas-disponiveis (not-empty (query/bolhas-disponiveis query/db {:user_id (:id user)}))]
+            bolhas-disponiveis (query/bolhas-disponiveis query/db {:user_id (:id user)})]
            (ok bolhas-disponiveis)
            (catch Exception e
              (log/error e)

@@ -13,7 +13,7 @@
   (try-let [token-data (sat/extract-token-data (sat/extract-token request))
             user (gfuser/get-user-by-email (:email token-data))
             body (:body-params request)
-            data (conj {:point (str "POINT(" (:latitude body) " " (:longitude body) ")")} {:agora (df/nowMysqlFormat)} (select-keys user [:id]))
+            data (conj {:point (str "POINT(" (:latitude body) " " (:longitude body) ")") :agora (df/nowMysqlFormat)} (select-keys user [:id]))
             result (query/update-user-localizacao-atual query/db data)]
            (ok {:message "Atualizado com sucesso"})
            (catch Exception e
