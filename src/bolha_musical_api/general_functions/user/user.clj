@@ -1,9 +1,9 @@
-(ns bolha-musical-api.general_functions.user.user
+(ns bolha-musical-api.general-functions.user.user
   (:require
    [ring.util.http-response :refer :all]
-   [bolha-musical-api.query_defs :as query]
+   [bolha-musical-api.query-defs :as query]
    [environ.core :refer [env]]
-   [bolha-musical-api.general_functions.date-formatters :as df]
+   [bolha-musical-api.general-functions.date-formatters :as df]
    [bolha-musical-api.general-functions.user.create-token :as ct]
    [clojure.set :refer :all]))
 

@@ -1,10 +1,10 @@
-(ns bolha-musical-api.route_functions.spotify.criar-login-codigo
+(ns bolha-musical-api.route-functions.spotify.criar-login-codigo
   (:require [ring.util.http-response :refer :all]
             [try-let :refer [try-let]]
             [clojure.tools.logging :as log]
-            [bolha-musical-api.general_functions.date-formatters :as df]
-            [bolha-musical-api.query_defs :as query]
-            [bolha-musical-api.general_functions.spotify.login_codigo :as gflg]))
+            [bolha-musical-api.general-functions.date-formatters :as df]
+            [bolha-musical-api.query-defs :as query]
+            [bolha-musical-api.general-functions.spotify.login-codigo :as gflg]))
 
 (defn- nao-consegui-sorry
   []

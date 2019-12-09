@@ -1,4 +1,4 @@
-(ns bolha-musical-api.general_functions.date-formatters
+(ns bolha-musical-api.general-functions.date-formatters
   (:require
    [clj-time.core :as t]
    [clj-time.local :as l]

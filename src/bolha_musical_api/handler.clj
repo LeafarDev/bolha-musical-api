@@ -14,7 +14,7 @@
      :data {:info {:title "Bolha-musical-api"
                    :description "Compojure Api example"}
             :tags [{:name "api", :description "some apis"}]}}}
-
    user
    spotify
    bolha))
+

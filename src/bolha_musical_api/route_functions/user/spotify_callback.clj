@@ -1,9 +1,9 @@
-(ns bolha-musical-api.route_functions.user.spotify-callback
+(ns bolha-musical-api.route-functions.user.spotify-callback
   (:require [clj-spotify.core :as sptfy]
-            [bolha-musical-api.general_functions.spotify.access_token :as sat]
-            [bolha-musical-api.general_functions.spotify.login_codigo :as gflg]
+            [bolha-musical-api.general-functions.spotify.access-token :as sat]
+            [bolha-musical-api.general-functions.spotify.login-codigo :as gflg]
             [ring.util.http-response :refer :all]
-            [bolha-musical-api.general_functions.user.user :as gfuser]
+            [bolha-musical-api.general-functions.user.user :as gfuser]
             [environ.core :refer [env]]
             [clojure.set :refer :all]))
 

@@ -1,14 +1,14 @@
-(ns bolha-musical-api.route_functions.bolha.entrar-bolha
+(ns bolha-musical-api.route-functions.bolha.entrar-bolha
   (:require [ring.util.http-response :refer :all]
             [try-let :refer [try-let]]
-            [bolha-musical-api.query_defs :as query]
+            [bolha-musical-api.query-defs :as query]
             [clojure.tools.logging :as log]
-            [bolha-musical-api.general_functions.date-formatters :as df]
-            [bolha-musical-api.general_functions.spotify.access_token :as sat]
-            [bolha-musical-api.general_functions.user.user :as gfuser]
+            [bolha-musical-api.general-functions.date-formatters :as df]
+            [bolha-musical-api.general-functions.spotify.access-token :as sat]
+            [bolha-musical-api.general-functions.user.user :as gfuser]
             [clojure.set :refer :all]
-            [bolha-musical-api.route_functions.bolha.bolha-atual-usuario :as rfbau]
-            [bolha-musical-api.query_defs :as query]))
+            [bolha-musical-api.route-functions.bolha.bolha-atual-usuario :as rfbau]
+            [bolha-musical-api.query-defs :as query]))
 
 (defn- bolha-existe?
   [bolha-id]

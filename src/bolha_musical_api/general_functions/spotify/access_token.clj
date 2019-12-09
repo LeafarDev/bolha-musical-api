@@ -1,9 +1,9 @@
-(ns bolha-musical-api.general_functions.spotify.access_token
+(ns bolha-musical-api.general-functions.spotify.access-token
   (:require [clj-http.client :as client]
             [try-let :refer [try-let]]
             [environ.core :refer [env]]
-            [bolha-musical-api.query_defs :as query]
-            [bolha-musical-api.general_functions.user.user :as gfuser]
+            [bolha-musical-api.query-defs :as query]
+            [bolha-musical-api.general-functions.user.user :as gfuser]
             [buddy.sign.jwt :as jwt]
             [clojure.tools.logging :as log]))
 
@@ -53,12 +53,16 @@
             juncao-trados-user-id (conj {:id (:id user)} dados_tratados_update)
             result-update (query/update-user-spotify-refresh-token query/db juncao-trados-user-id)
             usuario-atualizado (gfuser/get-user-by-email (:email user))]
-           usuario-atualizado
+           true
            (catch Exception e
-             (log/error e "refresh-access-token"))
+             (log/error e "refresh-access-token")
+             false)
            (catch Exception e
-             (log/error e "gfuser/converte-token-data-spotify-em-dado-local"))
+             (log/error e "gfuser/converte-token-data-spotify-em-dado-local")
+             false)
            (catch Exception e
-             (log/error e "query/update-user-spotify-refresh-token"))
+             (log/error e "query/update-user-spotify-refresh-token")
+             false)
            (catch Exception e
-             (log/error e "gfuser/get-user-by-email"))))
+             (log/error e "gfuser/get-user-by-email")
+             false)))

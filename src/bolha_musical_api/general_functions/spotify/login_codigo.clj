@@ -1,6 +1,6 @@
-(ns bolha-musical-api.general_functions.spotify.login_codigo
-  (:require [bolha-musical-api.general_functions.date-formatters :as df]
-            [bolha-musical-api.query_defs :as query]))
+(ns bolha-musical-api.general-functions.spotify.login-codigo
+  (:require [bolha-musical-api.general-functions.date-formatters :as df]
+            [bolha-musical-api.query-defs :as query]))
 
 (defn state-valido-em-callback?
   "Recebo um código e verifico se é válido para ser utilizado no callback"

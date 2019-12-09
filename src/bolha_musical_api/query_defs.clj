@@ -1,4 +1,4 @@
-(ns bolha-musical-api.query_defs
+(ns bolha-musical-api.query-defs
   (:require
    [hugsql.core :as hugsql]
    [environ.core :refer [env]]))

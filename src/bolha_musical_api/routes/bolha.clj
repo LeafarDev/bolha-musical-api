@@ -5,12 +5,12 @@
             [bolha-musical-api.middleware.token-auth :refer [token-auth-mw]]
             [bolha-musical-api.middleware.cors :refer [cors-mw]]
             [bolha-musical-api.middleware.authenticated :refer [authenticated-mw]]
-            [bolha-musical-api.middleware.spotify_refresh_token :refer [sptfy-refresh-tk-mw]]
-            [bolha-musical-api.route_functions.bolha.bolha-atual-usuario :as rfbau]
-            [bolha-musical-api.route_functions.bolha.criar-bolha :as rfcbol]
-            [bolha-musical-api.route_functions.bolha.sair-bolha :as rfsbol]
-            [bolha-musical-api.route_functions.bolha.entrar-bolha :as rfebol]
-            [bolha-musical-api.route_functions.bolha.bolhas_disponiveis :as rfbp]))
+            [bolha-musical-api.middleware.spotify-refresh-token :refer [sptfy-refresh-tk-mw]]
+            [bolha-musical-api.route-functions.bolha.bolha-atual-usuario :as rfbau]
+            [bolha-musical-api.route-functions.bolha.criar-bolha :as rfcbol]
+            [bolha-musical-api.route-functions.bolha.sair-bolha :as rfsbol]
+            [bolha-musical-api.route-functions.bolha.entrar-bolha :as rfebol]
+            [bolha-musical-api.route-functions.bolha.bolhas-disponiveis :as rfbp]))
 
 (s/defschema BolhaSchema {:apelido #"^[A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ\s]{1,50}$"})
 

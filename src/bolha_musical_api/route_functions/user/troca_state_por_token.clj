@@ -1,8 +1,8 @@
-(ns bolha-musical-api.route_functions.user.troca-state-por-token
+(ns bolha-musical-api.route-functions.user.troca-state-por-token
   (:require [ring.util.http-response :refer :all]
-            [bolha-musical-api.general_functions.user.user :as gfuser]
+            [bolha-musical-api.general-functions.user.user :as gfuser]
             [bolha-musical-api.general-functions.user.create-token :as ct]
-            [bolha-musical-api.general_functions.spotify.login_codigo :as gflg]))
+            [bolha-musical-api.general-functions.spotify.login-codigo :as gflg]))
 
 (defn get-token
   "docstring"

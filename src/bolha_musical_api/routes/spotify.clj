@@ -1,12 +1,13 @@
 (ns bolha-musical-api.routes.spotify
   (:require [compojure.api.sweet :refer :all]
-            [bolha-musical-api.route_functions.spotify.criar-login-codigo :as rfclc]
-            [bolha-musical-api.route_functions.user.spotify-callback :as usercriacao]
-            [bolha-musical-api.route_functions.user.troca-state-por-token :as rfutspt]
-            [bolha-musical-api.middleware.spotify_refresh_token :refer [sptfy-refresh-tk-mw]]
+            [bolha-musical-api.route-functions.spotify.criar-login-codigo :as rfclc]
+            [bolha-musical-api.route-functions.user.spotify-callback :as usercriacao]
+            [bolha-musical-api.route-functions.user.troca-state-por-token :as rfutspt]
+            [bolha-musical-api.middleware.spotify-refresh-token :refer [sptfy-refresh-tk-mw]]
             [ring.util.http-response :refer :all]
             [bolha-musical-api.middleware.token-auth :refer [token-auth-mw]]
             [bolha-musical-api.middleware.cors :refer [cors-mw]]
+            [bolha-musical-api.route-functions.spotify.search :as rfssh]
             [bolha-musical-api.middleware.authenticated :refer [authenticated-mw]]
             [schema.core :as s]))
 
@@ -31,4 +32,8 @@
       (rfutspt/get-token state))
     (GET "/refresh/teste" []
       :middleware [sptfy-refresh-tk-mw]
-      (ok (str "check u privileges")))))
+      (ok (str "check u privileges")))
+    (GET "/search" request
+      :query-params [query]
+      :middleware [token-auth-mw cors-mw authenticated-mw sptfy-refresh-tk-mw]
+      (rfssh/search request query))))
