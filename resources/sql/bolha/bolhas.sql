@@ -73,3 +73,18 @@ limit  0, 30;
 -- :doc Insere uma bolha fixa
 insert into bolhas (referencia, apelido ,  eh_fixa, referencia_raio_fixo, tamanho_bolha_referencia_id, user_lider_id)
 values (:referencia, :apelido ,  1, GeomFromText(:referencia_raio_fixo), 1, :user_id);
+-- :name get-bolhas-ativas
+-- :command :select
+-- :doc Busca bolhas ativas com tracks e membros presentes
+select bolhas.*,
+   St_x(bolhas.referencia_raio_fixo)       as latitude,
+   St_y(bolhas.referencia_raio_fixo)       as longitude,
+   referencias_tamanhos_bolhas.raio_metros as raio
+from   bolhas
+   join referencias_tamanhos_bolhas
+     on referencias_tamanhos_bolhas.id = bolhas.tamanho_bolha_referencia_id
+   join bolhas_membros on bolhas_membros.bolha_id = bolhas.id
+   join bolhas_playlists_tracks on bolhas_playlists_tracks.bolha_id = bolhas.id
+where  bolhas.deleted_at is null
+group by bolhas.id;
+

@@ -49,8 +49,8 @@
   "Faço a lógica de chamar o refresh token e tambem atualizar os dados necessários do usuário"
   [user]
   (try-let [token_data (refresh-access-token (:spotify_refresh_token user))
-            dados_tratados_update (gfuser/converte-token-data-spotify-em-dado-local token_data)
-            juncao-trados-user-id (conj {:id (:id user)} dados_tratados_update)
+            dados-tratados-update (gfuser/converte-token-data-spotify-em-dado-local token_data)
+            juncao-trados-user-id (conj {:id (:id user)} dados-tratados-update)
             result-update (query/update-user-spotify-refresh-token query/db juncao-trados-user-id)
             usuario-atualizado (gfuser/get-user-by-email (:email user))]
            true

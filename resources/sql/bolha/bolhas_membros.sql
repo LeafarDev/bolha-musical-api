@@ -3,7 +3,8 @@
 -- :doc Busca bolha que o usuário está atualmente participando
 SELECT bolhas_membros.*,
        ST_X(users.ultima_localizacao) as latitude ,
-       ST_Y(users.ultima_localizacao) as longitude
+       ST_Y(users.ultima_localizacao) as longitude,
+       users.spotify_access_token
 FROM   bolhas_membros
        JOIN bolhas
          ON bolhas.id = bolhas_membros.bolha_id

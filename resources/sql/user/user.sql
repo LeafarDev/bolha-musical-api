@@ -35,7 +35,7 @@ set email                    = :email,
     spotify_last_state       = :spotify_last_state
 where id = :id;
 
--- :name update-user-spotify_refresh_token :! :n
+-- :name update-user-spotify-refresh-token :! :n
 -- :command :update
 -- :doc Atualiza um usuário a partir dos dados vindos do callback do spotify
 update users

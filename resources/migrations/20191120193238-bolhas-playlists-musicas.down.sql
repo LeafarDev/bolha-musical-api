@@ -1,1 +1,0 @@
-DROP TABLE bolhas_playlists_musicas;
