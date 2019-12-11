@@ -17,7 +17,7 @@
             bolha (query/get-bolha-atual-usuario query/db {:user_id (:id user)})]
            (if (not-empty bolha)
              (let [membros-bolha (not-empty (query/busca-membros-bolha query/db {:bolha_id (:id bolha)}))
-                   membros-bolha-com-me (map #(conj % {:me (sptfy/get-current-users-profile {} (:spotify_access_token user))}) membros-bolha)]
+                   membros-bolha-com-me (map #(conj % {:me (sptfy/get-current-users-profile {} (:spotify_access_token %))}) membros-bolha)]
                (ok (conj bolha {:membros membros-bolha-com-me})))
              (not-found! {:message "Usuário não está em uma bolha"}))
            (catch Exception e

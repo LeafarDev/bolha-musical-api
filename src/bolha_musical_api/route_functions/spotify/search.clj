@@ -13,7 +13,7 @@
             user (gfuser/get-user-by-email (:email token-data))]
            ; TODO validar a resposta do spotify, não dá exception na call mesmo dando 401
            (if (not-empty query)
-             (ok (:tracks (sptfy/search {:q query :type "track" :market "BR" :limit 10 :offset 0} (:spotify_access_token user))))
+             (ok (:tracks (sptfy/search {:q query :type "track" :market "BR" :limit 30 :offset 0} (:spotify_access_token user))))
              (ok (gftrack/get-user-top-tracks (:spotify_access_token user))))
            (catch Exception e
              (log/error e)

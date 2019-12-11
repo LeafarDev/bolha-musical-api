@@ -14,6 +14,7 @@
                  [environ "1.1.0"]
                  [clojurewerkz/quartzite "2.1.0"]
                  [com.fzakaria/slf4j-timbre "0.3.14"]
+                 [com.climate/claypoole "1.1.4"]
                  ]
   :plugins [[lein-environ "1.1.0"]
             [lein-cljfmt "0.6.5"]

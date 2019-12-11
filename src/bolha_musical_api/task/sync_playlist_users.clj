@@ -12,6 +12,7 @@
             [clojurewerkz.quartzite.schedule.simple :refer [repeat-forever with-interval-in-milliseconds]]
             [clj-spotify.core :as sptfy]
             [clojurewerkz.quartzite.scheduler :as qs]
+            [com.climate.claypoole :as cp]
             [clojurewerkz.quartzite.triggers :as t]
             [clojurewerkz.quartzite.jobs :as j]
             [clojurewerkz.quartzite.jobs :refer [defjob]]
@@ -47,7 +48,7 @@
   [started-at duration-ms]
   ;;; quem sabe eu possa começar a chamar a pŕoxima música faltando um segundo pra diminuir a falta de sincronia ?
   (try (let [ends-at (time-clj/plus started-at (time-clj/millis duration-ms))]
-         (when (df/date-greater? (l/local-now) ends-at) (log/error "TERMINOU::::" (df/date-greater? (l/local-now) ends-at) (l/local-now) ends-at) true))
+         (when (df/date-greater? (l/local-now) ends-at) (log/warn "TERMINOU::::" (df/date-greater? (l/local-now) ends-at) (l/local-now) ends-at) true))
        (catch Exception e
          (log/error e))))
 
@@ -67,10 +68,10 @@
 (defn- tocar-track-para-membros
   [track-id bolha-id track-id-interno]
   (let [membros (query/busca-membros-bolha query/db {:bolha_id bolha-id})]
-    (for [membro membros]
+    (cp/pfor 4 [membro membros]
       (let [devices (sptfy/get-current-users-available-devices {} (:spotify_access_token membro)) primeiro-device (:id (first (:devices devices)))] (log/info (str "spotify:track:" track-id " internal-id:" track-id-interno)) (query/atualiza-estado-para-execucao-track query/db {:id track-id-interno, :agora (df/nowMysqlFormat)}) (sptfy/start-or-resume-a-users-playback {:device_id primeiro-device, :uris [(str "spotify:track:" track-id)]} (:spotify_access_token membro))))))
 
-(defn- nehuma-tocando?
+(defn- nenhuma-tocando?
   [playlist]
   (empty? (filter #(= 1 (:current_playing %)) playlist)))
 (defn- proxima
@@ -84,8 +85,8 @@
         (do (log/info "---------------- SINCRONIZANDO -----------------")
             (let [sincronizadas (sincronizar-tempo-tracks playlist)]
               (go-for-loop [track-sincronizada sincronizadas]
-                           (if (nehuma-tocando? sincronizadas)
-                             (do (log/info "nehuma-tocando?:: true")
+                           (if (nenhuma-tocando? sincronizadas)
+                             (do (log/info "nenhuma-tocando?:: true")
                                  (dorun (tocar-track-para-membros (:spotify_track_id track-sincronizada) (:id bolha) (:id track-sincronizada)))
                                  (break))
                              (if (= 1 (:current_playing track-sincronizada)) ;;; REVER
