@@ -27,6 +27,16 @@ services:
       - MYSQL_PASSWORD=123456
     ports:
       - "4443:3306"
+  bi:
+    image: metabase/metabase
+    volumes:
+      - "/home/rafael/metabase/volumes:/metabase-data"
+    environment:
+      MB_DB_FILE: "/metabase-data/metabase.db"
+    ports:
+      - "3000:3000"
+    depends_on:
+      - mysql
   redis:
     image: redis:alpine
     container_name: bolha-redis

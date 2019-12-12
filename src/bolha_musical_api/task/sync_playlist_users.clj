@@ -80,15 +80,16 @@
 
 (defn- exec []
   (if-let [bolhas-ativas (not-empty (query/get-bolhas-ativas query/db))]
-    (for [bolha bolhas-ativas]
+    (for [bolha bolhas-ativas]                              ;;; talvez desnecessário
       (if-let [playlist (not-empty (query/get-tracks-by-bolha-id query/db {:bolha_id (:id bolha)}))]
         (do (log/info "---------------- SINCRONIZANDO -----------------")
             (let [sincronizadas (sincronizar-tempo-tracks playlist)]
-              (go-for-loop [track-sincronizada sincronizadas]
-                           (if (nenhuma-tocando? sincronizadas)
-                             (do (log/info "nenhuma-tocando?:: true")
+              (go-for-loop [track-sincronizada sincronizadas] ;;; remover esse loop, é desnecessauro
+                           (if (nenhuma-tocando? sincronizadas) ;;; isso não precisa executar dentro do loop
+                             (do (log/info "nenhuma-tocando?:: true") ;;; levar em conta as que já tocaram
                                  (dorun (tocar-track-para-membros (:spotify_track_id track-sincronizada) (:id bolha) (:id track-sincronizada)))
                                  (break))
+                             ;; isso não precisa do loop, um search já resolve
                              (if (= 1 (:current_playing track-sincronizada)) ;;; REVER
                                (when (track-terminou? (c/from-sql-date (:started_at track-sincronizada)) (:duration_ms track-sincronizada))
                                  (if-let [proxima (not-empty (proxima sincronizadas (:id track-sincronizada)))]
@@ -103,10 +104,10 @@
   [ctx]
   (let [lock-key (keyword (str "lock-id-" 1))]
     (locking lock-key
-      (do (log/info "DO::SyncPlaylistUsersJob")
+      (do (log/info "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+          (log/info "<---------------- DO::SyncPlaylistUsersJob       ---------------->")
           (dorun (exec))
-          (log/info "FINISHED::SyncPlaylistUsersJob")))))
-
+          (log/info "<---------------- FINISHED::SyncPlaylistUsersJob ---------------->")))))
 (defn go
   [& m]
   (let [s (qs/start (qs/initialize))

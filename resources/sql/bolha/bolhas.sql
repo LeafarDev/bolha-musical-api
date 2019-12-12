@@ -83,7 +83,7 @@ select bolhas.*,
 from   bolhas
    join referencias_tamanhos_bolhas
      on referencias_tamanhos_bolhas.id = bolhas.tamanho_bolha_referencia_id
-   join bolhas_membros on bolhas_membros.bolha_id = bolhas.id
+   join bolhas_membros on bolhas_membros.bolha_id = bolhas.id and bolhas_membros.checkout is null
    join bolhas_playlists_tracks on bolhas_playlists_tracks.bolha_id = bolhas.id
 where  bolhas.deleted_at is null
 group by bolhas.id;

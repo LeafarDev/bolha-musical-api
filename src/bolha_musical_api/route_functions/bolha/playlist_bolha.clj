@@ -25,9 +25,7 @@
                                                                    :baixavotos
                                                                    :bolha_id])
                                                   (doall tracks-bancos))]
-                 (ok (clojure.set/join (:tracks tracks-spotify)
-                                       tracks-bancos-resumidas
-                                       {:id :spotify_track_id})))
+                 (ok (map #(conj %1 %2) (:tracks tracks-spotify) tracks-bancos-resumidas)))
                (not-found! {:message "Não há nenhuma música"}))
              (not-found! {:message "Você não está em uma bolha"}))
            (catch Exception e
