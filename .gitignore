@@ -2,3 +2,5 @@
 .profiles.clj
 profiles\.clj
 /.idea/
+/resources/locales.clj
+/dev-resources/i18n/bin

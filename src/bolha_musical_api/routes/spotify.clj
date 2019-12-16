@@ -11,10 +11,6 @@
             [bolha-musical-api.middleware.authenticated :refer [authenticated-mw]]
             [schema.core :as s]))
 
-(s/defschema SpotifyCallBackSchema
-  {:code  s/Str
-   :state s/Str})
-
 (def spotify
   (context "/api/v1/spotify" []
     :tags ["api"]

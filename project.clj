@@ -15,7 +15,12 @@
                  [clojurewerkz/quartzite "2.1.0"]
                  [com.fzakaria/slf4j-timbre "0.3.14"]
                  [com.climate/claypoole "1.1.4"]
-                 ]
+                 [org.flatland/ordered "1.5.7"]
+                 [metis "0.3.3"]
+                 [commons-validator/commons-validator "1.6"                         ; Apache Commons -- useful validation util fns
+                  :exclusions [commons-beanutils
+                               commons-digester
+                               commons-logging]]]
   :plugins [[lein-environ "1.1.0"]
             [lein-cljfmt "0.6.5"]
             [lein-kibit "0.1.8"]
@@ -26,7 +31,7 @@
   :migratus {:store         :database
              :migration-dir "migrations"
              :db            ~(get (System/getenv) "DATABASE_URL")}
-  :uberjar-name "server.jar"
+  :uberjar-name "bolha.jar"
   :profiles {
              ;; Set these in ./profiles.clj
              :test-env-vars {}

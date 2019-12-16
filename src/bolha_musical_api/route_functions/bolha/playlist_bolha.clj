@@ -25,7 +25,7 @@
                                                                    :baixavotos
                                                                    :bolha_id])
                                                   (doall tracks-bancos))]
-                 (ok (map #(conj %1 %2) (:tracks tracks-spotify) tracks-bancos-resumidas)))
+                 (ok (map conj (:tracks tracks-spotify) tracks-bancos-resumidas)))
                (not-found! {:message "Não há nenhuma música"}))
              (not-found! {:message "Você não está em uma bolha"}))
            (catch Exception e
