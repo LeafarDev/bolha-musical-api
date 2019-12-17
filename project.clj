@@ -32,6 +32,7 @@
              :migration-dir "migrations"
              :db            ~(get (System/getenv) "DATABASE_URL")}
   :uberjar-name "bolha.jar"
+  :jvm-opts ["-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=4001"]
   :profiles {
              ;; Set these in ./profiles.clj
              :test-env-vars {}
