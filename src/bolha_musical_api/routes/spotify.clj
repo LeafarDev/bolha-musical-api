@@ -26,7 +26,7 @@
       ; :middleware [token-auth-mw cors-mw authenticated-mw sptfy-refresh-tk-mw]
       (rfutspt/get-token state))
     (GET "/refresh/teste" []
-      :middleware [sptfy-refresh-tk-mw]
+      :middleware [token-auth-mw cors-mw authenticated-mw sptfy-refresh-tk-mw]
       (ok (str "check u privileges")))
     (GET "/search" request
       :query-params [query]

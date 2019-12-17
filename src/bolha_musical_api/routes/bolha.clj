@@ -20,6 +20,7 @@
   (context "/api/v1/spotify/bolhas" request
     :tags ["api"]
     (GET "/disponiveis" []
+      :middleware [token-auth-mw cors-mw authenticated-mw sptfy-refresh-tk-mw]
       :summary "Busca bolhas no alcance da localização atual do usuário logado"
       (rfbp/bolhas-disponiveis request))
     (GET "/atual" request
