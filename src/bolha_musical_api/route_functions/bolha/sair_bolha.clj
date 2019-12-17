@@ -18,8 +18,7 @@
 (defn sair-bolha
   "Sair da bolha atual do usuário"
   [request]
-  (try-let [token-data (sat/extract-token-data (sat/extract-token request))
-            user (gfuser/get-user-by-email (:email token-data))
+  (try-let [user (sat/extract-user request)
             user-id (:id user)]
            (try (query/remove-usuario-bolha query/db {:user_id (:id user) :checkout (df/nowMysqlFormat)})
                 (ok {:message "Feito"})

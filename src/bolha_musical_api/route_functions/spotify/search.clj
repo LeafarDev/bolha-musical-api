@@ -9,8 +9,7 @@
 
 (defn search
   [request query]
-  (try-let [token-data (sat/extract-token-data (sat/extract-token request))
-            user (gfuser/get-user-by-email (:email token-data))]
+  (try-let [user (sat/extract-user request)]
            ; TODO validar a resposta do spotify, não dá exception na call mesmo dando 401
            (if (not-empty query)
              (ok (:tracks (sptfy/search {:q query :type "track" :market "BR" :limit 30 :offset 0} (:spotify_access_token user))))

@@ -35,8 +35,7 @@
 (defn entrar-bolha
   "Entra em uma bolha, se já estiver em outra, sairá dela"
   [request bolha-id]
-  (try-let [token-data (sat/extract-token-data (sat/extract-token request))
-            user (gfuser/get-user-by-email (:email token-data))
+  (try-let [user (sat/extract-user request)
             user-id (:id user)]
            (cond
              (not (bolha-existe? bolha-id))

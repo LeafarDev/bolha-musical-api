@@ -5,6 +5,7 @@
    [environ.core :refer [env]]
    [bolha-musical-api.general-functions.date-formatters :as df]
    [bolha-musical-api.general-functions.user.create-token :as ct]
+   [bolha-musical-api.util :as util]
    [clojure.set :refer :all]))
 
 (defn get-user-by-email
@@ -25,8 +26,9 @@
   "Pego '/me' do spotify e transformo em mapa compativel com dados do banco"
   [user_me]
   (-> user_me
-      (rename-keys {:id :spotify_client_id})
-      (select-keys [:spotify_client_id :email])))
+      (assoc :language_code (util/get-country-language (:country user_me)))
+      (rename-keys {:id :spotify_client_id :country :country_code})
+      (select-keys [:spotify_client_id :email :country_code :language_code])))
 
 (defn converte-token-data-spotify-em-dado-local
   "Pego '/token' do spotify e transformo em mapa compativel com dados do banco"

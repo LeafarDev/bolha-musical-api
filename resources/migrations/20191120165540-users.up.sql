@@ -12,6 +12,8 @@ CREATE TABLE IF NOT EXISTS users
     spotify_token_expires_at datetime null,
     spotify_refresh_token  varchar(255) null,
     spotify_last_state varchar(36) null,
+    country_code  varchar(2) null,
+    language_code varchar(10) null,
     ultima_localizacao POINT null, /* utilizado quando for bolha fixa*/
     data_ultima_localizacao DATETIME null,
     created_by int null,

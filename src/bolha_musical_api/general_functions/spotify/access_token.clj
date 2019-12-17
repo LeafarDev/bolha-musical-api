@@ -5,6 +5,7 @@
             [bolha-musical-api.query-defs :as query]
             [bolha-musical-api.general-functions.user.user :as gfuser]
             [buddy.sign.jwt :as jwt]
+            [bolha-musical-api.util :as util]
             [clojure.tools.logging :as log]))
 
 (defn get-access-token-client
@@ -44,6 +45,12 @@
                     :basic-auth  [(env :spotify-client-id) (env :spotify-client-secret)]
                     :as          :json})
       :body))
+
+(defn extract-user
+  [request]
+  (let [token-data (extract-token-data (extract-token request))
+        user (gfuser/get-user-by-email (:email token-data))]
+    user))
 
 (defn handle-user-spotify-refresh-token
   "Faço a lógica de chamar o refresh token e tambem atualizar os dados necessários do usuário"

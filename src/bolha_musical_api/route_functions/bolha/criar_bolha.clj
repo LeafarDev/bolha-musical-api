@@ -12,8 +12,7 @@
 (defn criar-bolha
   "Retorno a bolha atual do usuário, junto com seus membros (contendo localizacao e o 'me' resumido deles)"
   [request bolha]
-  (try-let [token-data (sat/extract-token-data (sat/extract-token request))
-            user (gfuser/get-user-by-email (:email token-data))
+  (try-let [user (sat/extract-user request)
             referencia (str (java.util.UUID/randomUUID))
             data-prep-insert (conj bolha {:referencia_raio_fixo (str "POINT(" (:latitude user) " " (:longitude user) ")")
                                           :referencia           referencia

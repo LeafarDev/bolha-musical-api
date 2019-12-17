@@ -19,8 +19,25 @@ where  spotify_last_state = :state;
 -- :name insert-user-spotify-callback :! :n
 -- :command :insert
 -- :doc Insere um novo usuário a partir dos dados vindos do callback do spotify
-insert into users (email , spotify_client_id, spotify_access_token, spotify_scope, spotify_token_expires_at, spotify_refresh_token, spotify_last_state)
-values (:email , :spotify_client_id, :spotify_access_token, :spotify_scope, :spotify_token_expires_at, :spotify_refresh_token, :spotify_last_state);
+INSERT INTO users
+            (email,
+             spotify_client_id,
+             spotify_access_token,
+             spotify_scope,
+             spotify_token_expires_at,
+             spotify_refresh_token,
+             spotify_last_state,
+             country_code,
+             language_code)
+VALUES      (:email,
+             :spotify_client_id,
+             :spotify_access_token,
+             :spotify_scope,
+             :spotify_token_expires_at,
+             :spotify_refresh_token,
+             :spotify_last_state,
+             :country_code,
+             :language_code);
 
 -- :name update-user-spotify-callback :! :n
 -- :command :update

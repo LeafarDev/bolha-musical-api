@@ -27,8 +27,7 @@
   token do spotify, no caso se apartir de 55 minutos passado após criação do token, já utilizo o refresh)"
   [handler]
   (fn [request]
-    (try-let [token-data (sat/extract-token-data (sat/extract-token request))
-              user (gfuser/get-user-by-email (:email token-data))
+    (try-let [user (sat/extract-user request)
               spotify_token_expires_at (c/from-sql-date (:spotify_token_expires_at user))]
              (if-not (ja-expirou? spotify_token_expires_at)
                (if (falta-cinco-minutos-ou-menos? spotify_token_expires_at)

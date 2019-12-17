@@ -16,6 +16,7 @@
                  [com.fzakaria/slf4j-timbre "0.3.14"]
                  [com.climate/claypoole "1.1.4"]
                  [org.flatland/ordered "1.5.7"]
+                 [tongue "0.2.9"]
                  [metis "0.3.3"]
                  [commons-validator/commons-validator "1.6"                         ; Apache Commons -- useful validation util fns
                   :exclusions [commons-beanutils

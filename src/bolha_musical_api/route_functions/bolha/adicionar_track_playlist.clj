@@ -19,8 +19,7 @@
 (defn adicionar-track-playlist
   "Adicionar uma nova track para playlist"
   [request track-id]
-  (try-let [token-data (sat/extract-token-data (sat/extract-token request))
-            user (gfuser/get-user-by-email (:email token-data))
+  (try-let [user (sat/extract-user request)
             bolha-atual (query/get-bolha-atual-usuario query/db {:user_id (:id user)})
             track (sptfy/get-a-track {:id track-id} (:spotify_access_token user))]
            (try (query/adicionar-track-playlist

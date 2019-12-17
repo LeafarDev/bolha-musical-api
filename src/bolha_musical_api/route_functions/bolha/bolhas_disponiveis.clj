@@ -10,8 +10,7 @@
 (defn  bolhas-disponiveis
   "Busca bolhas no alcance da localização atual do usuário logado"
   [request]
-  (try-let [token-data (sat/extract-token-data (sat/extract-token request))
-            user (gfuser/get-user-by-email (:email token-data))
+  (try-let [user (sat/extract-user request)
             bolhas-disponiveis (query/bolhas-disponiveis query/db {:user_id (:id user)})]
            (ok bolhas-disponiveis)
            (catch Exception e

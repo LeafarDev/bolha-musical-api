@@ -18,6 +18,13 @@
   (fn [& args]
     (apply f (concat args bound-args))))
 
+(defn get-country-language
+  "Verifica se é BR e retorna pt-br, por enquanto, para outros países apenas en"
+  [country-code]
+  (if (= country-code "BR")
+    :pt-br
+    :en))
+
 (defn email?
   "Is `s` a valid email address string?"
   ^Boolean [^String s]

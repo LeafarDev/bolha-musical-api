@@ -11,8 +11,7 @@
 (defn playlist-bolha
   "retorno a playlist atual da bolha usuário"
   [request]
-  (try-let [token-data (sat/extract-token-data (sat/extract-token request))
-            user (gfuser/get-user-by-email (:email token-data))
+  (try-let [user (sat/extract-user request)
             bolha (query/get-bolha-atual-usuario query/db {:user_id (:id user)})]
            (if (not-empty bolha)
              (if-let [tracks-bancos (not-empty (query/get-tracks-by-bolha-id query/db {:bolha_id (:id bolha)}))]

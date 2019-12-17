@@ -12,8 +12,7 @@
 (defn bolha-atual-usuario
   "Retorno a bolha atual do usuário, junto com seus membros (contendo localizacao e o 'me' resumido deles)"
   [request]
-  (try-let [token-data (sat/extract-token-data (sat/extract-token request))
-            user (gfuser/get-user-by-email (:email token-data))
+  (try-let [user (sat/extract-user request)
             bolha (query/get-bolha-atual-usuario query/db {:user_id (:id user)})]
            (if (not-empty bolha)
              (let [membros-bolha (not-empty (query/busca-membros-bolha query/db {:bolha_id (:id bolha)}))
