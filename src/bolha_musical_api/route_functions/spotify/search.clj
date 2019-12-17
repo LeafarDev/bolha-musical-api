@@ -3,17 +3,14 @@
             [clj-spotify.core :as sptfy]
             [try-let :refer [try-let]]
             [bolha-musical-api.general-functions.spotify.access-token :as sat]
-            [bolha-musical-api.general-functions.user.user :as gfuser]
             [bolha-musical-api.general-functions.spotify.track :as gftrack]
-            [clojure.tools.logging :as log]))
+            [bolha-musical-api.locale.dicts :refer [translate]]))
 
 (defn search
+  "Busca por uma track, se o usuário não informar nada na pesquisa retorna as top tracks do usuário"
   [request query]
-  (try-let [user (sat/extract-user request)]
-           ; TODO validar a resposta do spotify, não dá exception na call mesmo dando 401
-           (if (not-empty query)
-             (ok (:tracks (sptfy/search {:q query :type "track" :market "BR" :limit 30 :offset 0} (:spotify_access_token user))))
-             (ok (gftrack/get-user-top-tracks (:spotify_access_token user))))
-           (catch Exception e
-             (log/error e)
-             (bad-request! {:message "Não foi possivel buscar as informações com o spotify"}))))
+  (let [user (sat/extract-user request)]
+    ; TODO validar a resposta do spotify, não dá exception na call mesmo dando 401
+    (if (not-empty query)
+      (ok (:tracks (sptfy/search {:q query :type "track" :market "BR" :limit 30 :offset 0} (:spotify_access_token user))))
+      (ok (gftrack/get-user-top-tracks (:spotify_access_token user))))))

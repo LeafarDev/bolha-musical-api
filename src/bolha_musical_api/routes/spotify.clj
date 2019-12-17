@@ -8,8 +8,7 @@
             [bolha-musical-api.middleware.token-auth :refer [token-auth-mw]]
             [bolha-musical-api.middleware.cors :refer [cors-mw]]
             [bolha-musical-api.route-functions.spotify.search :as rfssh]
-            [bolha-musical-api.middleware.authenticated :refer [authenticated-mw]]
-            [schema.core :as s]))
+            [bolha-musical-api.middleware.authenticated :refer [authenticated-mw]]))
 
 (def spotify
   (context "/api/v1/spotify" []
@@ -18,10 +17,10 @@
       ; :return {:id java.lang.String :expires_at java.lang.String :created_at String}
       :summary "Retorna um código para o client pode logar no spotify"
       (rfclc/criar-novo-codigo-de-login))
-    (GET "/login/callback" []
+    (GET "/login/callback" request
       :query-params [code :- String, state :- String]
       :summary "Recebe o callback do spotify e retorna o usuário se tudo estiver certo"
-      (usercriacao/tratar-usuario-spotify-callback code state))
+      (usercriacao/tratar-usuario-spotify-callback request))
     (GET "/state/trocar/token" []
       :query-params [state]
       ; :middleware [token-auth-mw cors-mw authenticated-mw sptfy-refresh-tk-mw]

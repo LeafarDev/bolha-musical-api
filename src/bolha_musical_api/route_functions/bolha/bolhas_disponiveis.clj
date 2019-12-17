@@ -4,7 +4,7 @@
             [bolha-musical-api.query-defs :as query]
             [clojure.tools.logging :as log]
             [bolha-musical-api.general-functions.spotify.access-token :as sat]
-            [bolha-musical-api.general-functions.user.user :as gfuser]
+            [bolha-musical-api.locale.dicts :refer [translate]]
             [clojure.set :refer :all]))
 
 (defn  bolhas-disponiveis
@@ -15,4 +15,5 @@
            (ok bolhas-disponiveis)
            (catch Exception e
              (log/error e)
-             (internal-server-error! {:message "Não foi possivel buscar bolhas no momento"}))))
+             (internal-server-error! {:message (translate (:language_code (sat/extract-user request))
+                                                          :cant-fetch-bubbles)}))))

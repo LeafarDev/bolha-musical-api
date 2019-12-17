@@ -5,9 +5,9 @@
             [clojure.tools.logging :as log]
             [bolha-musical-api.general-functions.date-formatters :as df]
             [bolha-musical-api.general-functions.spotify.access-token :as sat]
-            [bolha-musical-api.general-functions.user.user :as gfuser]
             [clojure.set :refer :all]
             [bolha-musical-api.route-functions.bolha.bolha-atual-usuario :as rfbau]
+            [bolha-musical-api.locale.dicts :refer [translate]]
             [bolha-musical-api.query-defs :as query]))
 
 (defn- bolha-existe?
@@ -26,12 +26,6 @@
   (let [data (query/bolhas-disponiveis query/db {:user_id user-id})]
     (not-empty (filter #(= bolha-id (:id %)) data))))
 
-(defn- call-internal-falha-msg-padrao
-  ([]
-   (internal-server-error! {:message "Não consegui inserir você na bolha, tente novamente mais tarde pls"}))
-  ([msg]
-   (internal-server-error! {:message msg})))
-
 (defn entrar-bolha
   "Entra em uma bolha, se já estiver em outra, sairá dela"
   [request bolha-id]
@@ -39,11 +33,11 @@
             user-id (:id user)]
            (cond
              (not (bolha-existe? bolha-id))
-             (not-found! {:message "Não encontrei essa bolha, tem certeza que ela existe?"})
+             (not-found! {:message (translate (:language_code user) :bubble-not-found)})
              (ja-esta-na-bolha? bolha-id user-id)
-             (precondition-failed {:message "Você já está nessa bolha"})
+             (precondition-failed! {:message (translate (:language_code user) :already-in-this-bubble)})
              (not (bolha-disponivel? bolha-id user-id))
-             (precondition-failed {:message "Você não cumpre os requisitos para entrar nessa bolha"})
+             (precondition-failed! {:message (translate (:language_code user) :bubble-not-available)})
              :else
              (try (query/remove-usuario-bolha query/db {:user_id (:id user) :checkout (df/nowMysqlFormat)})
                   (query/insert-membro-bolha query/db {:bolha_id bolha-id,
@@ -52,9 +46,7 @@
                   (rfbau/bolha-atual-usuario request)
                   (catch Exception e
                     (log/error e)
-                    (call-internal-falha-msg-padrao))))
-           (catch Exception e
-             (log/error e)
-             (call-internal-falha-msg-padrao))))
+                    (internal-server-error! {:message (translate (:language_code (sat/extract-user request))
+                                                                 :failed-to-get-in-the-bubble)}))))))
 
 

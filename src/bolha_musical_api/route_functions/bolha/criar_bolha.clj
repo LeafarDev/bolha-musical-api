@@ -5,7 +5,7 @@
             [clojure.tools.logging :as log]
             [bolha-musical-api.general-functions.spotify.access-token :as sat]
             [bolha-musical-api.general-functions.date-formatters :as df]
-            [bolha-musical-api.general-functions.user.user :as gfuser]
+            [bolha-musical-api.locale.dicts :refer [translate]]
             [bolha-musical-api.route-functions.bolha.bolha-atual-usuario :as rfbau]
             [clojure.set :refer :all]))
 
@@ -27,4 +27,5 @@
            (rfbau/bolha-atual-usuario request)
            (catch Exception e
              (log/error e)
-             (internal-server-error! {:message "Não foi possivel inserir a bolha, tente novamente mais tarde"}))))
+             (internal-server-error! {:message (translate (:language_code (sat/extract-user request))
+                                                          :failed-to-insert-the-bubble)}))))

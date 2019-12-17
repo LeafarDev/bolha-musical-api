@@ -4,11 +4,8 @@
             [clojure.tools.logging :as log]
             [bolha-musical-api.general-functions.date-formatters :as df]
             [bolha-musical-api.query-defs :as query]
-            [bolha-musical-api.general-functions.spotify.login-codigo :as gflg]))
+            [bolha-musical-api.locale.dicts :refer [translate]]))
 
-(defn- nao-consegui-sorry
-  []
-  (str ""))
 (defn criar-novo-codigo-de-login
   "Cria um uuid no banco e o retorna"
   []
@@ -17,9 +14,8 @@
                          :expires_at (df/parse-mysql-date-time-format (df/agora-add-minutos 15))
                          :created_at (df/nowMysqlFormat)}
             create-result (query/criar-novo-codigo-de-login query/db data-codigo)]
-           (if (= 1 create-result)
-             (ok data-codigo)
-             (internal-server-error! {:message "Não consegui inicializar a sessão, poderia tentar mais tarde ? :/"}))
+           (ok data-codigo)
            (catch Exception e
              (log/error e)
-             (bad-request! {:message "Não consegui inicializar a sessão, poderia tentar mais tarde ? :/"}))))
+             (internal-server-error! {:message (translate nil :session-start-error)}))))
+

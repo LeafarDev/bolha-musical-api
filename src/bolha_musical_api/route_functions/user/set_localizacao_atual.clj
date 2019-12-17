@@ -5,8 +5,7 @@
             [clojure.tools.logging :as log]
             [bolha-musical-api.general-functions.spotify.access-token :as sat]
             [bolha-musical-api.general-functions.date-formatters :as df]
-            [bolha-musical-api.locale.dicts :refer [translate]]
-            [bolha-musical-api.general-functions.user.user :as gfuser]))
+            [bolha-musical-api.locale.dicts :refer [translate]]))
 
 (defn set-localizacao-atual
   "Recebo latitude e longitude e salvo no usuário"
@@ -18,5 +17,5 @@
            (ok {:message (translate (:language_code user) :location-updated)})
            (catch Exception e
              (log/error e)
-             (bad-request! {:message (translate (:language_code (sat/extract-user request))
-                                                      :cant-update-location)}))))
+             (internal-server-error! {:message (translate (:language_code (sat/extract-user request))
+                                                          :cant-update-location)}))))
