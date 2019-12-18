@@ -3,7 +3,6 @@
   (:require [clojurewerkz.quartzite.scheduler :as qs]
             [clj-time.core :as time-clj]
             [clj-time.local :as l]
-            [clj-time.format :as f]
             [clj-time.coerce :as c]
             [bolha-musical-api.query-defs :as query]
             [bolha-musical-api.general-functions.date-formatters :as df]
@@ -14,6 +13,8 @@
             [com.climate.claypoole :as cp]
             [clojurewerkz.quartzite.triggers :as t]
             [clojurewerkz.quartzite.jobs :as j]
+            [bolha-musical-api.redis_defs :refer [wcar*]]
+            [taoensso.carmine :as car :refer (wcar)]
             [clojurewerkz.quartzite.jobs :refer [defjob]]
             [bolha-musical-api.util :as u]
             [clojurewerkz.quartzite.schedule.simple :refer [schedule repeat-forever with-interval-in-milliseconds]]))
@@ -40,7 +41,9 @@
   [started-at duration-ms]
   ;;; quem sabe eu possa começar a chamar a pŕoxima música faltando um segundo pra diminuir a falta de sincronia ?
   (try (let [ends-at (time-clj/plus started-at (time-clj/millis duration-ms))]
-         (when (df/date-greater? (l/local-now) ends-at) (log/warn "TERMINOU::::" (df/date-greater? (l/local-now) ends-at) (l/local-now) ends-at) true))
+         (when (df/date-greater? (l/local-now) ends-at)
+           (log/warn "TERMINOU::::" (df/date-greater? (l/local-now) ends-at) (l/local-now) ends-at)
+           true))
        (catch Exception e
          (log/error e))))
 
@@ -61,12 +64,19 @@
   [track-id track-id-interno device-id spotify-access-token]
   (do
     (log/info (str "spotify:track:" track-id " internal-id:" track-id-interno))
-    (query/atualiza-estado-para-execucao-track query/db {:id track-id-interno, :agora (df/nowMysqlFormat)})
-    (sptfy/start-or-resume-a-users-playback {:device_id device-id, :uris [(str "spotify:track:" track-id)]} spotify-access-token)))
+    (sptfy/start-or-resume-a-users-playback {:device_id device-id :uris [(str "spotify:track:" track-id)]} spotify-access-token)))
+
+;;; kibit buga com wcar*
+(defn- del-bolha-key
+  [bolha-key]
+  (wcar* (car/del bolha-key)))
 
 (defn- tocar-track-para-membros
   [track-id bolha-id track-id-interno]
-  (let [membros (query/busca-membros-bolha query/db {:bolha_id bolha-id})]
+  (let [membros (query/busca-membros-bolha query/db {:bolha_id bolha-id})
+        bolha-key (str "playlist-bolha-" bolha-id)]
+    (query/atualiza-estado-para-execucao-track query/db {:id track-id-interno :agora (df/nowMysqlFormat)})
+    (del-bolha-key bolha-key)
     (cp/pfor 4 [membro membros]
              (let [devices (sptfy/get-current-users-available-devices {} (:spotify_access_token membro))
                    primeiro-device (:id (first (:devices devices)))]

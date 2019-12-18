@@ -3,7 +3,10 @@
   (:require [clojure
              [string :as str]]
             [flatland.ordered.map :refer [ordered-map]]
-            [ring.util.http-response :refer :all])
+            [ring.util.http-response :refer :all]
+            [bolha-musical-api.redis_defs :refer [wcar*]]
+            [taoensso.carmine :as car :refer (wcar)]
+            [clojure.tools.logging :as log])
   (:import org.apache.commons.validator.routines.UrlValidator))
 
 (defn ^:deprecated rpartial
@@ -105,3 +108,8 @@
      (doseq [~@loop-definition :while @continue#]
        ~@body)))
 
+(defn rmember
+  [key seconds f]
+  (if-let [data (not-empty (wcar* (car/get key)))]
+    data
+    (last (wcar* (car/set key (eval f)) (car/expire key seconds) (car/get key)))))
