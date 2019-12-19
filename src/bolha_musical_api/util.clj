@@ -121,3 +121,28 @@
     (last (wcar* (car/set key (run-when-function f))
                  (car/expire key seconds)
                  (car/get key)))))
+
+(defn interger-or-next-integer
+  "retorno numero atual se inteiro ou pŕoximo inteiro se racional"
+  [number]
+  (if (and (or (= 1.0 (mod number 2))
+               (= 0.0 (mod number 2))) (> number 0))
+    (int number)
+    (inc (int number))))
+
+;;; https://stackoverflow.com/a/26457638/7095787
+(defn piles [m xs]
+  (let [cnt (count xs)
+        l   (quot cnt m)
+        r   (rem cnt m)
+        k   (* (inc l) r)]
+    (concat
+     (partition-all (inc l) (take k xs))
+     (partition-all l (drop k xs)))))
+
+(defn partition-by-max-sized-piece
+  "Pego uma lista e divido em vários pedaços com tamanho máximo n"
+  [max-size-piece list]
+  (let [list-size (count list)
+        pieces (interger-or-next-integer (double (/ list-size max-size-piece)))]
+    (piles pieces list)))
