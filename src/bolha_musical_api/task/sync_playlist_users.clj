@@ -130,9 +130,9 @@
                  (t/start-now)
                  (t/with-schedule (schedule
                                    (repeat-forever)
-                                   (with-interval-in-milliseconds 5000))))]
+                                   (with-interval-in-milliseconds 11000))))]
     (qs/schedule s job trigger)))
 
 (defn init []
-  (println "starting quartzite")
+  (log/info "starting quartzite")
   (go))

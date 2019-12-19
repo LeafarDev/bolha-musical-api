@@ -6,6 +6,7 @@
             [ring.util.http-response :refer :all]
             [bolha-musical-api.redis_defs :refer [wcar*]]
             [taoensso.carmine :as car :refer (wcar)]
+            [bolha-musical-api.general-functions.spotify.track :refer [relacionar-tracks-local-com-spotify]]
             [clojure.tools.logging :as log])
   (:import org.apache.commons.validator.routines.UrlValidator))
 
@@ -107,9 +108,16 @@
          ~'break (fn [] (swap! continue# (constantly false)))]
      (doseq [~@loop-definition :while @continue#]
        ~@body)))
-
+(defn run-when-function
+  "Run when f is function, return when it's not"
+  [f]
+  (if (fn? f)
+    (f)
+    f))
 (defn rmember
   [key seconds f]
   (if-let [data (not-empty (wcar* (car/get key)))]
     data
-    (last (wcar* (car/set key (eval f)) (car/expire key seconds) (car/get key)))))
+    (last (wcar* (car/set key (run-when-function f))
+                 (car/expire key seconds)
+                 (car/get key)))))

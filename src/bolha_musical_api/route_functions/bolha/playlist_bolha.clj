@@ -17,7 +17,7 @@
         spotify-access-token (:spotify_access_token user)
         bolha-id (:id bolha)]
     (if (not-empty bolha)
-      (if-let [playlist (not-empty (rmember bolha-key 3600 `(relacionar-tracks-local-com-spotify ~bolha-id ~spotify-access-token)))]
+      (if-let [playlist (not-empty (rmember bolha-key 3600 #(relacionar-tracks-local-com-spotify bolha-id spotify-access-token)))]
         (ok playlist)
         (not-found! {:message (translate (:language_code user) :there-is-no-music)}))
       (not-found! {:message (translate (:language_code user) :u-are-not-in-a-bubble)}))))

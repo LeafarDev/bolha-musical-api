@@ -12,12 +12,6 @@
             [clj-time.core :as t]
             [clj-time.local :as l]))
 
-(defn- call-internal-falha-msg-padrao
-  ([]
-   (internal-server-error! {:message "Não consegui inserir essa track, tente novamente mais tarde pls"}))
-  ([msg]
-   (internal-server-error! {:message msg})))
-
 (defn adicionar-track-playlist
   "Adicionar uma nova track para playlist"
   [request track-id]

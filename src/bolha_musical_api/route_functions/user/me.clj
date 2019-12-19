@@ -15,7 +15,7 @@
             me-key (str "me-" id-user)
             token (:spotify_access_token user)]
            ; TODO validar a resposta do spotify, não dá exception na call mesmo dando 401
-           (ok (rmember me-key 3600 `(sptfy/get-current-users-profile {} ~token)))
+           (ok (rmember me-key 3600 #(sptfy/get-current-users-profile {} token)))
            (catch Exception e
              (log/error e)
              (internal-server-error! {:message (translate (:language_code (sat/extract-user request))
