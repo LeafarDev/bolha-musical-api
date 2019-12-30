@@ -12,7 +12,8 @@
             [bolha-musical-api.route-functions.bolha.sair-bolha :as rfsbol]
             [bolha-musical-api.route-functions.bolha.entrar-bolha :as rfebol]
             [bolha-musical-api.route-functions.bolha.bolhas-disponiveis :as rfbp]
-            [bolha-musical-api.route-functions.bolha.adicionar-track-playlist :as rfatp]))
+            [bolha-musical-api.route-functions.bolha.adicionar-track-playlist :as rfatp]
+            [bolha-musical-api.route-functions.bolha.current-playing :as rfcp]))
 
 (s/defschema BolhaSchema {:apelido #"^[A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ\s]{1,50}$"})
 
@@ -31,6 +32,10 @@
       :middleware [token-auth-mw cors-mw authenticated-mw sptfy-refresh-tk-mw]
       :summary "Retorna bolhas disponiveis pro usuário"
       (rfplaylist/playlist-bolha request))
+    (GET "/playlist/current-playing" request
+      :middleware [token-auth-mw cors-mw authenticated-mw sptfy-refresh-tk-mw]
+      :summary "Retorna bolhas disponiveis pro usuário"
+      (rfcp/current-playing request))
     (POST "/playlist/track" request
       :middleware [token-auth-mw cors-mw authenticated-mw sptfy-refresh-tk-mw]
       :body-params [id :- String]
