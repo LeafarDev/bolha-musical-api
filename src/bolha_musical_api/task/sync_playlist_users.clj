@@ -71,6 +71,14 @@
   [bolha-key]
   (wcar* (car/del bolha-key)))
 
+(defn- device-id-or-first-existent-id
+  "Retorno o device-id solicitado pelo o usuário"
+  [devices device-id]
+  (when (not-empty devices)
+    (if (not-empty (filter #(= (:id %) device-id) devices))
+      device-id
+      (:id (first devices)))))
+
 (defn- tocar-track-para-membros
   [track-id bolha-id track-id-interno]
   (let [membros (query/busca-membros-bolha query/db {:bolha_id bolha-id})
@@ -78,9 +86,11 @@
     (query/atualiza-estado-para-execucao-track query/db {:id track-id-interno :agora (df/nowMysqlFormat)})
     (del-bolha-key bolha-key)
     (cp/pfor 4 [membro membros]
-             (let [devices (sptfy/get-current-users-available-devices {} (:spotify_access_token membro))
-                   primeiro-device (:id (first (:devices devices)))]
-               (processa-track-membro track-id track-id-interno primeiro-device (:spotify_access_token membro))))))
+             (let [devices (:devices (sptfy/get-current-users-available-devices {} (:spotify_access_token membro)))
+                   current-device-id-selected (:spotify_current_device membro)
+                   device-id (device-id-or-first-existent-id devices current-device-id-selected)]
+               (when-not (nil? device-id)
+                 (processa-track-membro track-id track-id-interno device-id (:spotify_access_token membro)))))))
 
 (defn- nenhuma-tocando?
   [playlist]

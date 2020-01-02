@@ -126,7 +126,7 @@
   "retorno numero atual se inteiro ou pŕoximo inteiro se racional"
   [number]
   (if (and (or (= 1.0 (mod number 2))
-               (= 0.0 (mod number 2))) (> number 0))
+               (= 0.0 (mod number 2))) (pos? number))
     (int number)
     (inc (int number))))
 

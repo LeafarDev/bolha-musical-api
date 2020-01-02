@@ -9,6 +9,8 @@
             [bolha-musical-api.middleware.spotify-refresh-token :refer [sptfy-refresh-tk-mw]]
             [bolha-musical-api.route-functions.user.me :refer [me]]
             [metis.core :as metis]
+            [bolha-musical-api.route-functions.user.devices :as rfdevs]
+            [bolha-musical-api.route-functions.user.update_current_device :as rfupdatedev]
             [bolha-musical-api.locale.dicts :refer [translate]]
             [bolha-musical-api.general-functions.spotify.access-token :as sat]))
 
@@ -22,7 +24,18 @@
                              [:longitude :presence {:message (translate (:language language) :enter-longitude)}])
                            (:body-params request))]
       (if (empty? result-validate)
-        (rfsla/set-localizacao-atual request)
+        (handler request)
+        (unprocessable-entity! result-validate)))))
+
+(defn- validate-update-current-device
+  "gambs para validar input do usuário como middleware"
+  [handler]
+  (fn [request]
+    (let [language (:language_code (sat/extract-user request))
+          result-validate ((metis/defvalidator validate-set-localizacao [:device_id :presence {:message (translate (:language language) :enter-device)}])
+                           (:body-params request))]
+      (if (empty? result-validate)
+        (handler request)
         (unprocessable-entity! result-validate)))))
 
 (def user
@@ -34,4 +47,10 @@
     (POST "/localizacao/atual" request
       :middleware [token-auth-mw cors-mw authenticated-mw sptfy-refresh-tk-mw validate-set-localizacao]
       :summary "Recebo a localização atual do usuário e salvo no banco"
-      (rfsla/set-localizacao-atual request))))
+      (rfsla/set-localizacao-atual request))
+    (GET "/devices" request
+      :middleware [token-auth-mw cors-mw authenticated-mw sptfy-refresh-tk-mw]
+      (rfdevs/devices request))
+    (PUT "/devices" request
+      :middleware [token-auth-mw cors-mw authenticated-mw sptfy-refresh-tk-mw validate-update-current-device]
+      (rfupdatedev/update-current-device request))))

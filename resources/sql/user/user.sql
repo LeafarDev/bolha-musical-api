@@ -68,3 +68,10 @@ update users
 set ultima_localizacao     = GeomFromText(:point),
     data_ultima_localizacao            = :agora
 where id = :id;
+
+-- :name update-user-spotify-current-device :! :n
+-- :command :update
+-- :doc Atualiza o device atual do usuário
+update users
+set spotify_current_device     = :spotify_current_device
+where id = :id;

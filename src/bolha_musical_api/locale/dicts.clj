@@ -23,7 +23,8 @@
                      :failed-to-get-in-the-bubble "Failed to enter the bubble. Please try again later"
                      :failed-to-insert-the-bubble "Unable to insert the bubble. Please try again later"
                      :cant-fetch-bubbles          "Unable to fetch any bubbles at this time. Please try again later"
-                     :failed-to-create-track     "Failed to create the track. Please try again later"}
+                     :failed-to-create-track      "Failed to create the track. Please try again later"
+                     :enter-device                "Enter device"}
 
    :pt-br           {:enter-latitude              "Informe a latitude"
                      :enter-longitude             "Informe a longitude"
@@ -46,7 +47,8 @@
                      :failed-to-get-in-the-bubble "Falha ao entrar na bolha. Por favor, tente novamente mais tarde"
                      :failed-to-insert-the-bubble "Não foi possivel inserir a bolha. Por favor, tente novamente mais tarde"
                      :cant-fetch-bubbles          "Não consegui buscar nenhuma bolha no momento. Por favor, tente novamente mais tarde"
-                     :failed-to-create-track      "Falha ao inserir a track. Por favor, tente novamente mais tarde"}
+                     :failed-to-create-track      "Falha ao inserir a track. Por favor, tente novamente mais tarde"
+                     :enter-device              "Informe o dispositivo"}
    :tongue/fallback :pt-br})
 
 (def translate                                              ;; [locale key & args] => string

@@ -21,17 +21,15 @@
     (do (print (str "| cacheando " (:id track)))
         (wcar* (car/set (:id track) track)))))
 
-
 (defn get-several-tracks
   [tracks-ids token]
-  (let [ids-sem-cache (filter #(= 0 (wcar* (car/exists %))) tracks-ids)
-        ids-com-cache (filter #(= 1 (wcar* (car/exists %))) tracks-ids)
-        tracks-do-cache (map #(wcar* (car/get %)) ids-com-cache)
+  (let [ids-sem-cache (filter (fn* [ids] (zero? (wcar* (car/exists ids)))) tracks-ids)
+        ids-com-cache (filter (fn* [ids] (= 1 (wcar* (car/exists ids)))) tracks-ids)
+        tracks-do-cache (map (fn* [ids] (wcar* (car/get ids))) ids-com-cache)
         tracks-do-spotify (sptfy/get-several-tracks {:ids (clojure.string/join "," ids-sem-cache)} token)
-        ;;; se usar conj com lazyseq e vector não juntara todos elementos ficará assim: ({:id ...} [{:id ...}])
         todas-tracks (concat tracks-do-cache (:tracks tracks-do-spotify))]
-    (do (cachear-tracks (:tracks tracks-do-spotify))
-        (remove nil? todas-tracks))))
+    (cachear-tracks (:tracks tracks-do-spotify))
+    (remove nil? todas-tracks)))
 
 (defn relacionar-tracks-local-com-spotify
   [bolha-id spotify-access-token]
