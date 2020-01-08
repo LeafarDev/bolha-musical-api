@@ -3,3 +3,7 @@
 profiles\.clj
 /.idea/
 /dev-resources/i18n/bin
+/data
+/mongo_db
+/mongo_db1
+/rocket_uploads

@@ -2,7 +2,6 @@
   (:require
    [ring.util.http-response :refer :all]
    [bolha-musical-api.query-defs :as query]
-   [environ.core :refer [env]]
    [bolha-musical-api.general-functions.date-formatters :as df]
    [bolha-musical-api.general-functions.user.create-token :as ct]
    [bolha-musical-api.util :as util]
@@ -20,37 +19,46 @@
     user))
 (defn expire-at-handle
   "Conversão do expire_in recebido do spotify"
-  [expires_in]
-  (df/parse-mysql-date-time-format (df/agora-add-minutos (df/segundos-para-minutos expires_in))))
+  [expires-in]
+  (df/parse-mysql-date-time-format (df/agora-add-minutos (df/segundos-para-minutos expires-in))))
 (expire-at-handle 3600)
 
 (defn converte-user-me-spotify-em-dado-local
   "Pego '/me' do spotify e transformo em mapa compativel com dados do banco"
-  [user_me]
-  (-> user_me
-      (assoc :language_code (util/get-country-language (:country user_me)))
+  [user-me]
+  (-> user-me
+      (assoc :language_code (str (util/get-country-language (:country user-me))))
       (rename-keys {:id :spotify_client_id :country :country_code})
       (select-keys [:spotify_client_id :email :country_code :language_code])))
 
 (defn converte-token-data-spotify-em-dado-local
-  "Pego '/token' do spotify e transformo em mapa compativel com dados do banco"
-  [token_data]
-  (-> token_data
-      (assoc  :spotify_token_expires_at (expire-at-handle (token_data :expires_in)))
+  "Pego '/token' do spotify e transformo em uma estrutura compativel com dados do banco"
+  [token-data]
+  (-> token-data
+      (assoc :spotify_token_expires_at (expire-at-handle (token-data :expires_in)))
       (rename-keys {:access_token :spotify_access_token :scope :spotify_scope :refresh_token :spotify_refresh_token})
       (select-keys [:spotify_access_token :spotify_scope :spotify_refresh_token :spotify_token_expires_at])))
 
 (defn junta-dados-spotify
-  "Pego dados do spotify e transformo em mapas compativeis com colunas do banco"
-  ([user_me token_data]
+  "Pego dados do spotify e transformo em uma estrutura compativel com colunas do banco"
+  ([user-me token-data]
    (conj
-    (converte-user-me-spotify-em-dado-local user_me)
-    (converte-token-data-spotify-em-dado-local token_data)))
-  ([user_me token_data user_local]
+    (converte-user-me-spotify-em-dado-local user-me)
+    (converte-token-data-spotify-em-dado-local token-data)))
+  ([user-me token-data user-local]
    (conj
-    (select-keys user_local [:id])
-    (converte-user-me-spotify-em-dado-local user_me)
-    (converte-token-data-spotify-em-dado-local token_data))))
+    (select-keys user-local [:id])
+    (converte-user-me-spotify-em-dado-local user-me)
+    (converte-token-data-spotify-em-dado-local token-data))))
+
+(defn transforma-spotify-me-em-rocket-data
+  "Pego o 'me' do spotify e transformo em estrutura compativel para criar usuário no chat"
+  [user-me]
+  (-> user-me
+      (rename-keys {:display_name :name
+                    :id           :username})
+      (assoc :password (str (java.util.UUID/randomUUID)))
+      (select-keys [:email :name :password :username])))
 
 (defn cria-usuario-banco-callback
   "Recebo os dados do usuário e o insiro na base, no fim retorno o token"

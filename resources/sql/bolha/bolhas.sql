@@ -71,8 +71,22 @@ limit  0, 30;
 -- :name criar-bolha-fixa :insert :raw
 -- :command :insert
 -- :doc Insere uma bolha fixa
-insert into bolhas (referencia, apelido ,  eh_fixa, referencia_raio_fixo, tamanho_bolha_referencia_id, user_lider_id)
-values (:referencia, :apelido ,  1, GeomFromText(:referencia_raio_fixo), 1, :user_id);
+INSERT INTO bolhas
+            (referencia,
+             apelido,
+             eh_fixa,
+             referencia_raio_fixo,
+             tamanho_bolha_referencia_id,
+             user_lider_id,
+             rocket_chat_canal_id)
+VALUES      (:referencia,
+             :apelido,
+             1,
+             GeomFromText(:referencia_raio_fixo),
+             1,
+             :user_id,
+             :rocket_chat_canal_id);
+
 -- :name get-bolhas-ativas
 -- :command :select
 -- :doc Busca bolhas ativas com tracks e membros presentes

@@ -25,6 +25,10 @@
   [minutos]
   (t/plus (l/local-now) (t/minutes minutos)))
 
+(defn meses-em-segundos
+  [meses]
+  (* meses 2629800))
+
 (defn segundos-para-minutos
   [segundos]
   (/ segundos 60))

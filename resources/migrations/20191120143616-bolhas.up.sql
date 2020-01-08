@@ -3,6 +3,7 @@ CREATE TABLE IF NOT EXISTS bolhas
     id         int PRIMARY KEY NOT NULL AUTO_INCREMENT,
     referencia varchar(36) NOT NULL,
     apelido varchar(50) not null,
+    rocket_chat_canal_id varchar(100) null,
     cor varchar(20) null,
     eh_fixa tinyint(1) default 0 not null,
     user_id_referencia_raio int null, /* se for fixo não precisa */

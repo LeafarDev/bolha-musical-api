@@ -5,6 +5,7 @@
             [bolha-musical-api.general-functions.spotify.access-token :as sat]
             [bolha-musical-api.locale.dicts :refer [translate]]
             [clojure.tools.logging :as log]
+            [bolha-musical-api.general-functions.rocket-chat.rocket :as rocket]
             [bolha-musical-api.util :refer [rmember]]))
 
 (defn me
@@ -13,9 +14,11 @@
   (try-let [user (sat/extract-user request)
             id-user (:id user)
             me-key (str "me-" id-user)
-            token (:spotify_access_token user)]
+            token (:spotify_access_token user)
+            user-me (rmember me-key 3600 #(sptfy/get-current-users-profile {} token))
+            rocket-token (rocket/user-token user)]
            ; TODO validar a resposta do spotify, não dá exception na call mesmo dando 401
-           (ok (rmember me-key 3600 #(sptfy/get-current-users-profile {} token)))
+           (ok (assoc user-me :rocket_chat_auth_token rocket-token))
            (catch Exception e
              (log/error e)
              (internal-server-error! {:message (translate (:language_code (sat/extract-user request))

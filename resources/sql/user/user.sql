@@ -1,3 +1,12 @@
+-- :name get-user-by-id
+-- :command :select
+-- :result :one
+-- :doc Busca usuário pelo seu id
+select *,
+    St_x(ultima_localizacao) as latitude,
+    St_y(ultima_localizacao) as longitude from users
+where  id = :id;
+
 -- :name get-user-by-email
 -- :command :select
 -- :result :one
@@ -28,7 +37,9 @@ INSERT INTO users
              spotify_refresh_token,
              spotify_last_state,
              country_code,
-             language_code)
+             language_code,
+             rocket_chat_id,
+             rocket_chat_password)
 VALUES      (:email,
              :spotify_client_id,
              :spotify_access_token,
@@ -37,7 +48,9 @@ VALUES      (:email,
              :spotify_refresh_token,
              :spotify_last_state,
              :country_code,
-             :language_code);
+             :language_code,
+             :rocket_chat_id,
+             :rocket_chat_password);
 
 -- :name update-user-spotify-callback :! :n
 -- :command :update
