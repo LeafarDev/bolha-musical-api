@@ -67,5 +67,13 @@
 
 (defn criar-canal
   "Chama do rocket chat api para criar o canal, utilizando referencia da bolha"
-  [nome-canal user]
-  (let [canal (try (-> (str (env :rocket-chat-base-url) "/api/v1/groups.create") (client/post {:as :json, :headers {:X-Auth-Token (admin-token), :X-User-Id (env :rocket-chat-admin-id)}, :form-params {:name nome-canal}}) :body :group) (catch Exception e (log/error e "There was an error in get-access-token-client")))] (when-not (= (env :rocket-chat-admin-id) (:rocket_chat_id user)) (adicionar-usuario-canal (:rocket_chat_id user) (:_id canal))) canal))
+  [canal-id user]
+  (let [canal (try (-> (str (env :rocket-chat-base-url) "/api/v1/groups.create")
+                       (client/post {:as          :json,
+                                     :headers     {:X-Auth-Token (admin-token), :X-User-Id (env :rocket-chat-admin-id)},
+                                     :form-params {:name canal-id}})
+                       :body
+                       :group)
+                   (catch Exception e (log/error e "There was an error in get-access-token-client")))]
+    (when-not (= (env :rocket-chat-admin-id) (:rocket_chat_id user))
+      (adicionar-usuario-canal (:_id canal) (:rocket_chat_id user))) ))
