@@ -38,8 +38,6 @@
           tracks-bancos-resumidas (map #(select-keys % [:spotify_track_id
                                                         :started_at
                                                         :current_playing
-                                                        :cimavotos
-                                                        :baixavotos
                                                         :bolha_id])
                                        (doall tracks-bancos))]
       (map conj tracks-spotify tracks-bancos-resumidas))))

@@ -20,4 +20,4 @@
          (catch Exception e
            (log/error e)
            (internal-server-error! {:message (translate (:language_code (sat/extract-user request))
-                                                        :fail-to-get-out-the-bubble)})))))
+                                                        :failed-to-get-out-the-bubble)})))))

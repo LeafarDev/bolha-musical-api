@@ -6,11 +6,18 @@ values (:bolha_id, :spotify_track_id, :duration_ms, :current_playing, :created_a
 
 -- :name get-tracks-by-bolha-id
 -- :command :select
--- :doc Busca usuário pelo seu email
+-- :doc Busca tracks de uma bolha
 select * from bolhas_playlists_tracks
 where  bolha_id = :bolha_id
-        and ((cimavotos - baixavotos) >= 0)
         and deleted_at is null
+order by id;
+
+-- :name get-track-by-id
+-- :command :select
+-- :result :one
+-- :doc Busca track pelo seu id
+select * from bolhas_playlists_tracks
+where  id = :id and deleted_at is null
 order by id;
 
 -- :name atualiza-estado-para-execucao-track :! :n
@@ -26,3 +33,26 @@ where id = :id;
 update bolhas_playlists_tracks
 set current_playing = 0
 where id = :id;
+
+-- :name adicionar-voto-track-playlist :! :n
+-- :command :insert
+-- :doc Insiro um novo voto para um track de uma bolha
+ INSERT INTO bolhas_playlists_tracks
+            (track_interno_id,
+             user_id,
+             cimavoto,
+             created_by,
+             created_at)
+VALUES      (:track_interno_id,
+             :user_id,
+             :cimavoto,
+             :created_by,
+             :created_at);
+
+-- :name remover-voto-track-playlist :! :n
+-- :command :update
+-- :doc Remove voto de um usuário
+UPDATE bolhas_playlists_tracks
+SET    deleted_at = :deleted_at
+WHERE  track_interno_id = :track_interno_id
+       AND user_id = :user_id;
