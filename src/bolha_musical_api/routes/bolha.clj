@@ -8,12 +8,16 @@
             [bolha-musical-api.middleware.authenticated :refer [authenticated-mw]]
             [bolha-musical-api.middleware.spotify-refresh-token :refer [sptfy-refresh-tk-mw]]
             [bolha-musical-api.route-functions.bolha.bolha-atual-usuario :as rfbau]
+            [bolha-musical-api.validations.votar_track_validation :refer [votar-track-playlist-validate]]
             [bolha-musical-api.route-functions.bolha.criar-bolha :as rfcbol]
             [bolha-musical-api.route-functions.bolha.sair-bolha :as rfsbol]
             [bolha-musical-api.route-functions.bolha.entrar-bolha :as rfebol]
+            [metis.core :as metis]
             [bolha-musical-api.route-functions.bolha.bolhas-disponiveis :as rfbp]
             [bolha-musical-api.route-functions.bolha.adicionar-track-playlist :as rfatp]
-            [bolha-musical-api.route-functions.bolha.current-playing :as rfcp]))
+            [bolha-musical-api.route-functions.bolha.votar-track-playlist :as rfvot]
+            [bolha-musical-api.route-functions.bolha.current-playing :as rfcp]
+            [bolha-musical-api.general-functions.spotify.access-token :as sat]))
 
 (s/defschema BolhaSchema {:apelido #"^[A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ\s]{1,50}$"})
 
@@ -41,6 +45,10 @@
       :body-params [id :- String]
       :summary "Insere uma track em uma bolha"
       (rfatp/adicionar-track-playlist request id))
+    (POST "/playlist/track/votar" request
+      :middleware [token-auth-mw cors-mw authenticated-mw sptfy-refresh-tk-mw votar-track-playlist-validate]
+      :summary "Insere uma track em uma bolha"
+      (rfvot/votar-track-playlist request))
     (POST "/" request
       :middleware [token-auth-mw cors-mw authenticated-mw sptfy-refresh-tk-mw]
       :body [bolha BolhaSchema]

@@ -20,6 +20,7 @@
         bolha-key (str "playlist-bolha-" (:id bolha-atual))
         track (sptfy/get-a-track {:id track-id} (:spotify_access_token user))]
     (try (do
+           (log/info (str "add " bolha-key))
            (query/adicionar-track-playlist
             query/db {:bolha_id         (:id bolha-atual)
                       :spotify_track_id track-id

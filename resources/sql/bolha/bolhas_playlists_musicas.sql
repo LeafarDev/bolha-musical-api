@@ -34,10 +34,17 @@ update bolhas_playlists_tracks
 set current_playing = 0
 where id = :id;
 
+-- :name get-votos-track
+-- :command :select
+-- :doc Busca votos de uma track pelo seu track id interno
+select * from bolhas_playlists_tracks_votos
+where  track_interno_id = :track_interno_id and deleted_at is null
+order by id;
+
 -- :name adicionar-voto-track-playlist :! :n
 -- :command :insert
 -- :doc Insiro um novo voto para um track de uma bolha
- INSERT INTO bolhas_playlists_tracks
+ INSERT INTO bolhas_playlists_tracks_votos
             (track_interno_id,
              user_id,
              cimavoto,
@@ -52,7 +59,7 @@ VALUES      (:track_interno_id,
 -- :name remover-voto-track-playlist :! :n
 -- :command :update
 -- :doc Remove voto de um usuário
-UPDATE bolhas_playlists_tracks
+UPDATE bolhas_playlists_tracks_votos
 SET    deleted_at = :deleted_at
 WHERE  track_interno_id = :track_interno_id
        AND user_id = :user_id;

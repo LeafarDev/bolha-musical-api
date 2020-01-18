@@ -6,7 +6,6 @@
             [ring.util.http-response :refer :all]
             [bolha-musical-api.redis_defs :refer [wcar*]]
             [taoensso.carmine :as car :refer (wcar)]
-            [bolha-musical-api.general-functions.spotify.track :refer [relacionar-tracks-local-com-spotify]]
             [clojure.tools.logging :as log])
   (:import org.apache.commons.validator.routines.UrlValidator))
 
@@ -146,3 +145,7 @@
   (let [list-size (count list)
         pieces (interger-or-next-integer (double (/ list-size max-size-piece)))]
     (piles pieces list)))
+
+(defn string-is-keyword?
+  [string]
+  (= ":" (str (.charAt string 0))))

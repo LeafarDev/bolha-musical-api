@@ -1,8 +1,10 @@
 (ns bolha-musical-api.general-functions.spotify.track
   (:require [clj-http.client :as client]
             [clj-spotify.core :as sptfy]
+            [bolha-musical-api.util :refer [partition-by-max-sized-piece]]
             [bolha-musical-api.query-defs :as query]
             [bolha-musical-api.redis_defs :refer [wcar*]]
+            [bolha-musical-api.util :refer [rmember]]
             [taoensso.carmine :as car :refer (wcar)]
             [clojure.set :refer :all]
             [clojure.tools.logging :as log]))
@@ -34,10 +36,32 @@
 (defn relacionar-tracks-local-com-spotify
   [bolha-id spotify-access-token]
   (if-let [tracks-bancos (not-empty (query/get-tracks-by-bolha-id query/db {:bolha_id bolha-id}))]
-    (let [tracks-spotify (get-several-tracks (map :spotify_track_id (doall tracks-bancos)) spotify-access-token)
-          tracks-bancos-resumidas (map #(select-keys % [:spotify_track_id
-                                                        :started_at
-                                                        :current_playing
-                                                        :bolha_id])
+    (let [ids (map :spotify_track_id (doall tracks-bancos))
+          tracks-spotify (get-several-tracks ids spotify-access-token)
+          tracks-bancos-resumidas (map #(-> %
+                                            (rename-keys {:id :id_interno})
+                                            (select-keys [:id_interno
+                                                          :started_at
+                                                          :current_playing
+                                                          :bolha_id]))
                                        (doall tracks-bancos))]
       (map conj tracks-spotify tracks-bancos-resumidas))))
+
+(defn check-users-saved-tracks
+  [tracks-ids spotify-access-token]
+  (let [pedacos-tracks (partition-by-max-sized-piece 50 tracks-ids)
+        relacao-curtidas (map #(sptfy/check-users-saved-tracks {:ids (clojure.string/join "," %)} spotify-access-token) pedacos-tracks)]
+    (rmember (str "saved-" spotify-access-token) 25
+             (map #(zipmap [:saved] [%]) (reduce concat relacao-curtidas)))))
+
+(defn relacionar-tracks-playlist-user-saved
+  [tracks-playlist token]
+  (let [ids (map :id (doall tracks-playlist))]
+    (check-users-saved-tracks ids token)))
+
+(defn votos-tracks-playlist
+  [tracks-playlist]
+  (map #(zipmap [:votos] [(rmember (str "playlist-bolha-votos-" (:id_interno %))
+                                   10
+                                   (query/get-votos-track query/db {:track_interno_id (:id_interno %)}))])
+       tracks-playlist))

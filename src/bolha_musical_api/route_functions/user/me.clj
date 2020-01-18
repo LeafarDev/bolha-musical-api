@@ -18,7 +18,7 @@
             user-me (rmember me-key 3600 #(sptfy/get-current-users-profile {} token))
             rocket-token (rocket/user-token user)]
            ; TODO validar a resposta do spotify, não dá exception na call mesmo dando 401
-           (ok (assoc user-me :rocket_chat_auth_token rocket-token))
+           (ok (assoc user-me :rocket_chat_auth_token rocket-token :user_id id-user))
            (catch Exception e
              (log/error e)
              (internal-server-error! {:message (translate (:language_code (sat/extract-user request))

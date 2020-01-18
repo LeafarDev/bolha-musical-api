@@ -76,4 +76,4 @@
                        :group)
                    (catch Exception e (log/error e "There was an error in get-access-token-client")))]
     (when-not (= (env :rocket-chat-admin-id) (:rocket_chat_id user))
-      (adicionar-usuario-canal (:_id canal) (:rocket_chat_id user))) ))
+      (adicionar-usuario-canal (:_id canal) (:rocket_chat_id user)))))
