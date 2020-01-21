@@ -11,19 +11,23 @@
             [bolha-musical-api.general-functions.spotify.track :refer [relacionar-tracks-local-com-spotify
                                                                        relacionar-tracks-playlist-user-saved
                                                                        votos-tracks-playlist]]))
+(defn- prepare-playlist
+  [bolha-id spotify-access-token language]
+  (if-let [playlist (not-empty (rmember (str "playlist-bolha-" bolha-id) 3600 #(relacionar-tracks-local-com-spotify bolha-id spotify-access-token)))]
+    (let [user-saved-tracks (relacionar-tracks-playlist-user-saved playlist spotify-access-token)
+          votos (rmember (str "playlist-bolha-votos-" bolha-id) 3600 #(votos-tracks-playlist playlist))]
+      (map conj playlist user-saved-tracks votos))
+    (not-found! {:message (translate language :there-is-no-music)})))
 
 (defn playlist-bolha
   "retorno a playlist atual da bolha usuário"
   [request]
   (let [user (sat/extract-user request)
+        language (:language_code user)
         bolha (query/get-bolha-atual-usuario query/db {:user_id (:id user)})
-        bolha-key (str "playlist-bolha-" (:id bolha))
         spotify-access-token (:spotify_access_token user)
         bolha-id (:id bolha)]
     (if (not-empty bolha)
-      (if-let [playlist (not-empty (rmember bolha-key 3600 #(relacionar-tracks-local-com-spotify bolha-id spotify-access-token)))]
-        (let [user-saved-tracks (relacionar-tracks-playlist-user-saved playlist spotify-access-token)
-              votos (votos-tracks-playlist playlist)]
-          (ok (map conj playlist user-saved-tracks votos)))
-        (not-found! {:message (translate (:language_code user) :there-is-no-music)}))
+      (ok (prepare-playlist bolha-id spotify-access-token language))
       (not-found! {:message (translate (:language_code user) :u-are-not-in-a-bubble)}))))
+

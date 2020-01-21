@@ -63,3 +63,17 @@ UPDATE bolhas_playlists_tracks_votos
 SET    deleted_at = :deleted_at
 WHERE  track_interno_id = :track_interno_id
        AND user_id = :user_id;
+
+-- :name get-votos-track-playlist-validos
+-- :command :select
+-- :doc Busca votos válidos de uma track pelo seu track id interno
+select bolhas_playlists_tracks_votos.*
+from bolhas_playlists_tracks_votos
+         join bolhas_playlists_tracks on bolhas_playlists_tracks.id =
+                                         bolhas_playlists_tracks_votos.track_interno_id
+    and bolhas_playlists_tracks.deleted_at is null
+         join bolhas_membros on bolhas_membros.bolha_id = bolhas_playlists_tracks.bolha_id
+    and bolhas_membros.deleted_at is null
+where bolhas_playlists_tracks_votos.track_interno_id = :track_interno_id
+  and bolhas_playlists_tracks_votos.deleted_at is null
+group by bolhas_playlists_tracks_votos.id

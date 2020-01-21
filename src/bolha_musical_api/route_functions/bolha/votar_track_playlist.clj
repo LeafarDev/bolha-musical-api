@@ -19,28 +19,23 @@
         data (:body-params request)
         agora (df/nowMysqlFormat)
         track-interna (query/get-track-by-id query/db {:id (:track_interno_id data)})
-        data-remove {:user_id          (:id user)
-                     :track_interno_id (:id track-interna)
-                     :deleted_at       agora}
+        data-remove {:deleted_at agora, :track_interno_id (:id track-interna), :user_id (:id user)}
         data-insert (-> data
-                        (conj {:created_at agora
-                               :created_by (:id user)
-                               :user_id    (:id user)})
+                        (conj {:user_id (:id user), :created_by (:id user), :created_at agora})
                         (dissoc :refletir_spotify))
-        token (:spotify_access_token user)
-        id-param-sptfy {:ids (:spotify_track_id track-interna)}
-        user-saved-bolha-key (str "liked-" (:spotify_access_token user))]
-    (do (when-not (= (:id bolha) (:bolha_id track-interna))
-          (log/info id-param-sptfy)
-          (bad-request! {:message (str "hum?" (:id bolha) "/" track-interna)}))
-        (query/remover-voto-track-playlist
-         query/db data-remove)
-        (log/info data-insert)
-        (query/adicionar-voto-track-playlist
-         query/db data-insert)
-        (when (:refletirs_potify data)
-          (wcar* (car/del user-saved-bolha-key))
-          (if (:cimavoto data)
-            (sptfy/save-tracks-for-user id-param-sptfy token)
-            (sptfy/remove-users-saved-tracks id-param-sptfy token)))
-        (ok {:message (translate (:language_code user) :done)}))))
+        token (:spotify_access_token user) id-param-sptfy {:ids (:spotify_track_id track-interna)}
+        user-saved-bolha-key (str "liked-" (:spotify_access_token user))
+        votos-bolha-key (str "playlist-bolha-votos-" (:id bolha))]
+    (when-not (= (:id bolha) (:bolha_id track-interna))
+      (log/info id-param-sptfy)
+      (bad-request! {:message (str "hum?" (:id bolha) "/" track-interna)}))
+    (query/remover-voto-track-playlist query/db data-remove)
+    (log/info data-insert)
+    (query/adicionar-voto-track-playlist query/db data-insert)
+    (wcar* (car/del votos-bolha-key))
+    (when (:refletirs_potify data)
+      (wcar* (car/del user-saved-bolha-key))
+      (if (:cimavoto data)
+        (sptfy/save-tracks-for-user id-param-sptfy token)
+        (sptfy/remove-users-saved-tracks id-param-sptfy token)))
+    (ok {:message (translate (:language_code user) :done)})))

@@ -18,6 +18,7 @@
   (let [user (sat/extract-user request)
         bolha-atual (query/get-bolha-atual-usuario query/db {:user_id (:id user)})
         bolha-key (str "playlist-bolha-" (:id bolha-atual))
+        votos-bolha-key (str "playlist-bolha-votos-" (:id bolha-atual))
         track (sptfy/get-a-track {:id track-id} (:spotify_access_token user))]
     (try (do
            (log/info (str "add " bolha-key))
@@ -27,7 +28,8 @@
                       :duration_ms      (:duration_ms track)
                       :current_playing  0
                       :created_at       (df/nowMysqlFormat)})
-           (wcar* (car/del bolha-key)))
+           (wcar* (car/del bolha-key))
+           (wcar* (car/del votos-bolha-key)))
          (ok {:message (translate (:language_code user) :done)})
          (catch Exception e
            (log/error e)

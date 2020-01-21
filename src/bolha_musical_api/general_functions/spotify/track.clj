@@ -61,7 +61,7 @@
 
 (defn votos-tracks-playlist
   [tracks-playlist]
-  (map #(zipmap [:votos] [(rmember (str "playlist-bolha-votos-" (:id_interno %))
+  (map #(zipmap [:votos] [(rmember (str "track-bolha-votos-" (:id_interno %))
                                    10
                                    (query/get-votos-track query/db {:track_interno_id (:id_interno %)}))])
        tracks-playlist))
