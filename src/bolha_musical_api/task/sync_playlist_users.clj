@@ -124,7 +124,7 @@
 
 (defn- exec []
   (if-let [bolhas-ativas (not-empty (query/get-bolhas-ativas query/db))]
-    (cp/pfor 4 [bolha bolhas-ativas]                              ;;; talvez desnecessário
+    (cp/pfor 4 [bolha bolhas-ativas]                        ;;; talvez desnecessário
              (if-let [playlist (not-empty (query/get-tracks-by-bolha-id query/db {:bolha_id (:id bolha)}))]
                (do (log/info "---------------- SINCRONIZANDO -----------------")
                    (let [sincronizadas (sincronizar-tempo-tracks playlist)]
@@ -135,7 +135,10 @@
                        (when (or (precisa-ser-skipada (:id atualmente-tocando) (:id bolha))
                                  (track-terminou? (c/from-sql-date (:started_at atualmente-tocando)) (:duration_ms atualmente-tocando)))
                          (query/atualiza-para-nao-execucao-track query/db (select-keys atualmente-tocando [:id]))
-                         (if-let [proxima (not-empty (proxima sincronizadas (:id atualmente-tocando)))] (do (log/info "running viena:: " (proxima sincronizadas (:id atualmente-tocando))) (dorun (tocar-track-para-membros (:spotify_track_id proxima) (:id bolha) (:id proxima))) true))))))))
+                         (if-let [proxima (not-empty (proxima sincronizadas (:id atualmente-tocando)))]
+                           (do (log/info "running viena:: " (proxima sincronizadas (:id atualmente-tocando)))
+                               (dorun (tocar-track-para-membros (:spotify_track_id proxima) (:id bolha) (:id proxima)))
+                               true))))))))
     (log/info "sem bolhas")))
 
 (defjob SyncPlaylistUsersJob
