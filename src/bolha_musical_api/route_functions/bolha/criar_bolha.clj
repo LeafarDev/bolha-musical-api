@@ -20,9 +20,9 @@
             data-prep-insert (conj bolha {:referencia_raio_fixo (str "POINT(" (:latitude user) " " (:longitude user) ")")
                                           :referencia           referencia
                                           :agora                (df/nowMysqlFormat)
-                                          :user_id              (:id user)
+                                          :user_lider_id              (:id user)
                                           :rocket_chat_canal_id (:_id rocker-chat-room-criado)})
-            insert-result (query/criar-bolha-fixa query/db data-prep-insert)
+            insert-result (query/criar-bolha query/db data-prep-insert)
             bolha-criada (query/get-bolha-by-referencia query/db {:referencia referencia})
             remove-usuario-bolhas-result (query/remove-usuario-bolha query/db {:user_id (:id user) :checkout (df/nowMysqlFormat)})
             add-usuario-bolha-criada-result (query/insert-membro-bolha query/db {:bolha_id (:id bolha-criada),

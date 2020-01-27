@@ -13,17 +13,21 @@
             [bolha-musical-api.route-functions.bolha.sair-bolha :as rfsbol]
             [bolha-musical-api.route-functions.bolha.entrar-bolha :as rfebol]
             [metis.core :as metis]
+            [bolha-musical-api.validations.criar_bolha_validation :refer [criar-bolha-validate]]
             [bolha-musical-api.route-functions.bolha.bolhas-disponiveis :as rfbp]
+            [bolha-musical-api.route-functions.bolha.bolha-referencias-tamanhos :as rfgref]
             [bolha-musical-api.route-functions.bolha.adicionar-track-playlist :as rfatp]
             [bolha-musical-api.route-functions.bolha.votar-track-playlist :as rfvot]
             [bolha-musical-api.route-functions.bolha.current-playing :as rfcp]
             [bolha-musical-api.general-functions.spotify.access-token :as sat]))
 
-(s/defschema BolhaSchema {:apelido #"^[A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ\s]{1,50}$"})
-
 (def bolha
   (context "/api/v1/spotify/bolhas" request
     :tags ["api"]
+    (GET "/referencias" []
+      :middleware [token-auth-mw cors-mw authenticated-mw sptfy-refresh-tk-mw]
+      :summary "Busca as opções de tamanhos de bolha"
+      (rfgref/bolha-referencias-tamanhos request))
     (GET "/disponiveis" []
       :middleware [token-auth-mw cors-mw authenticated-mw sptfy-refresh-tk-mw]
       :summary "Busca bolhas no alcance da localização atual do usuário logado"
@@ -50,9 +54,8 @@
       :summary "Insere uma track em uma bolha"
       (rfvot/votar-track-playlist request))
     (POST "/" request
-      :middleware [token-auth-mw cors-mw authenticated-mw sptfy-refresh-tk-mw]
-      :body [bolha BolhaSchema]
-      :summary "Recebo o apelido da bolha para cria-la"
+      :middleware [token-auth-mw cors-mw authenticated-mw sptfy-refresh-tk-mw criar-bolha-validate]
+      :summary "Recebo informações da bolha para criar"
       (rfcbol/criar-bolha request bolha))
     (POST "/entrar" request
       :middleware [token-auth-mw cors-mw authenticated-mw sptfy-refresh-tk-mw]

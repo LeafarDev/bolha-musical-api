@@ -5,14 +5,15 @@
             [bolha-musical-api.locale.dicts :refer [translate]]
             [bolha-musical-api.util :refer [string-is-keyword?]]
             [clojure.tools.reader.reader-types :as r]
-
+            [clojure.string :as str]
             [bolha-musical-api.general-functions.spotify.access-token :as sat]
             [clojure.tools.logging :as log]))
 
 (defn- translate-messages
   [lista language]
   (map #(if (string-is-keyword? %)
-          (translate language (read-string %))
+          (apply translate language (read-string (first (str/split % #" ")))
+                 (rest (str/split % #" ")))
           %)
        lista))
 

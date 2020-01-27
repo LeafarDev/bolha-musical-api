@@ -7,6 +7,8 @@
             [bolha-musical-api.general-functions.date-formatters :as df]
             [bolha-musical-api.locale.dicts :refer [translate]]))
 
+;; verifica se é lider da bolha, se for, atualizar a localização da bolha tambem
+
 (defn set-localizacao-atual
   "Recebo latitude e longitude e salvo no usuário"
   [request]

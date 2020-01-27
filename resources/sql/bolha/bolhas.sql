@@ -68,9 +68,9 @@ where  users.id = :user_id
 having distancia_metros <= referencias_tamanhos_bolhas.raio_metros
 order  by distancia_metros
 limit  0, 30;
--- :name criar-bolha-fixa :insert :raw
+-- :name criar-bolha :insert :raw
 -- :command :insert
--- :doc Insere uma bolha fixa
+-- :doc Insere uma bolha
 INSERT INTO bolhas
             (referencia,
              apelido,
@@ -78,13 +78,15 @@ INSERT INTO bolhas
              referencia_raio_fixo,
              tamanho_bolha_referencia_id,
              user_lider_id,
+             cor,
              rocket_chat_canal_id)
 VALUES      (:referencia,
              :apelido,
-             1,
+             :eh_fixa,
              GeomFromText(:referencia_raio_fixo),
-             1,
-             :user_id,
+             :tamanho_bolha_referencia_id,
+             :user_lider_id,
+             :cor,
              :rocket_chat_canal_id);
 
 -- :name get-bolhas-ativas
@@ -102,3 +104,10 @@ from   bolhas
 where  bolhas.deleted_at is null
 group by bolhas.id;
 
+-- :name get-referencias-tamanhos-bolhas
+-- :command :select
+-- :doc Busca bolhas ativas com tracks e membros presentes
+select referencias_tamanhos_bolhas.*
+from referencias_tamanhos_bolhas
+where referencias_tamanhos_bolhas.deleted_at is null
+group by referencias_tamanhos_bolhas.id;
