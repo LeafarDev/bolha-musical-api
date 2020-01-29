@@ -5,7 +5,8 @@ SELECT bolhas_membros.*,
        ST_X(users.ultima_localizacao) as latitude ,
        ST_Y(users.ultima_localizacao) as longitude,
        users.spotify_access_token,
-       users.spotify_current_device
+       users.spotify_current_device,
+       users.mostrar_localizacao_mapa
 FROM   bolhas_membros
        JOIN bolhas
          ON bolhas.id = bolhas_membros.bolha_id

@@ -37,4 +37,4 @@
 (defn metis-is-keyword? [map key _]
   (when (not-empty (get map key))
     (when-not (string-is-keyword? (get map key))
-    (str "The field must be a keyword."))))
+      (str "The field must be a keyword."))))

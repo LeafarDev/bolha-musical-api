@@ -22,8 +22,8 @@
   (fn [request]
     (let [language (read-string (:language_code (sat/extract-user request)))
           result-validate ((metis/defvalidator validate-set-localizacao
-                                               [:latitude :presence {:message (translate (:language language) :enter-latitude)}]
-                                               [:longitude :presence {:message (translate (:language language) :enter-longitude)}])
+                             [:latitude :presence {:message (translate (:language language) :enter-latitude)}]
+                             [:longitude :presence {:message (translate (:language language) :enter-longitude)}])
                            (:body-params request))]
       (if (empty? result-validate)
         (handler request)

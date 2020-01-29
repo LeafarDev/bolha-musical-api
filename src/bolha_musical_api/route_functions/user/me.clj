@@ -22,7 +22,7 @@
             rocket-token (rocket/user-token user)]
            ; TODO validar a resposta do spotify, não dá exception na call mesmo dando 401
            (ok (conj user-data (assoc user-me :rocket_chat_auth_token rocket-token
-                              :user_id id-user)))
+                                      :user_id id-user)))
            (catch Exception e
              (log/error e)
              (internal-server-error! {:message (translate (read-string (:language_code (sat/extract-user request)))

@@ -7,10 +7,10 @@
             [bolha-musical-api.util :refer [string-is-keyword?]]))
 
 (metis/defvalidator rule
-                    [:language_code [:presence {:message ":field-required"}]
-                     ['metis-is-keyword? {:message ":wrong-formatting"}]]
-                    [:mostrar_localizacao_mapa [:presence {:message ":field-required"}]
-                     ['metis-bool? {:message ":field-must-be-boolean"}]])
+  [:language_code [:presence {:message ":field-required"}]
+   ['metis-is-keyword? {:message ":wrong-formatting"}]]
+  [:mostrar_localizacao_mapa [:presence {:message ":field-required"}]
+   ['metis-bool? {:message ":field-must-be-boolean"}]])
 
 (defn update-preferences-validate
   "passa a validação para função de validação e tradução de erros"
