@@ -14,5 +14,5 @@
            (ok referencias)
            (catch Exception e
              (log/error e)
-             (internal-server-error! {:message (translate (:language_code (sat/extract-user request))
+             (internal-server-error! {:message (translate (read-string (:language_code (sat/extract-user request)))
                                                           :error)}))))

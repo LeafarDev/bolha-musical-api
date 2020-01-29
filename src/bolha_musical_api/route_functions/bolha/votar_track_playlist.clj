@@ -38,4 +38,4 @@
       (if (:cimavoto data)
         (sptfy/save-tracks-for-user id-param-sptfy token)
         (sptfy/remove-users-saved-tracks id-param-sptfy token)))
-    (ok {:message (translate (:language_code user) :done)})))
+    (ok {:message (translate (read-string (:language_code user)) :done)})))

@@ -19,5 +19,5 @@
     (if (not-empty bolha)
       (if-let [playlist (not-empty (rmember bolha-key 3600 #(relacionar-tracks-local-com-spotify bolha-id spotify-access-token)))]
         (ok (first (filter #(= 1 (:current_playing %)) playlist)))
-        (not-found! {:message (translate (:language_code user) :there-is-no-music)}))
-      (not-found! {:message (translate (:language_code user) :u-are-not-in-a-bubble)}))))
+        (not-found! {:message (translate (read-string (:language_code user)) :there-is-no-music)}))
+      (not-found! {:message (translate (read-string (:language_code user)) :u-are-not-in-a-bubble)}))))

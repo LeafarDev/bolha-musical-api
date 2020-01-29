@@ -3,11 +3,9 @@
             [ring.util.http-response :refer :all]
             [schema.core :as s]
             [bolha-musical-api.locale.dicts :refer [translate]]
-            [bolha-musical-api.util :refer [string-is-keyword?]]
-            [clojure.tools.reader.reader-types :as r]
+            [bolha-musical-api.util :refer :all]
             [clojure.string :as str]
-            [bolha-musical-api.general-functions.spotify.access-token :as sat]
-            [clojure.tools.logging :as log]))
+            [bolha-musical-api.general-functions.spotify.access-token :as sat]))
 
 (defn- translate-messages
   [lista language]
@@ -17,10 +15,12 @@
           %)
        lista))
 
+;;(translate :en :wrong-formatting)
+
 (defn call-validation
   "gambs para validar input do usuário como middleware"
   [handler request rule-f]
-  (let [language (:language_code (sat/extract-user request))
+  (let [language (read-string (:language_code (sat/extract-user request)))
         result-validate (rule-f (:body-params request))]
     (if (empty? result-validate)
       (handler request)
@@ -33,3 +33,8 @@
 (defn metis-bool? [map key _]
   (when-not (boolean? (get map key))
     (str "The field must be true or false.")))
+
+(defn metis-is-keyword? [map key _]
+  (when (not-empty (get map key))
+    (when-not (string-is-keyword? (get map key))
+    (str "The field must be a keyword."))))

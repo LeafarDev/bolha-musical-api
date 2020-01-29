@@ -12,8 +12,9 @@
 
 (defn criar-bolha
   "Retorno a bolha atual do usuário, junto com seus membros (contendo localizacao e o 'me' resumido deles)"
-  [request bolha]
+  [request]
   (try-let [user (sat/extract-user request)
+            bolha (:body-params request)
             bolha-antiga (query/get-bolha-atual-usuario query/db {:user_id (:id user)})
             referencia (str (java.util.UUID/randomUUID))
             rocker-chat-room-criado (rocket/criar-canal referencia user)
@@ -33,5 +34,5 @@
                (rfbau/bolha-atual-usuario request))
            (catch Exception e
              (log/error e)
-             (internal-server-error! {:message (translate (:language_code (sat/extract-user request))
+             (internal-server-error! {:message (translate (read-string (:language_code (sat/extract-user request)))
                                                           :failed-to-insert-the-bubble)}))))

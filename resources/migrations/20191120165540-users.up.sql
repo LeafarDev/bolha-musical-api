@@ -5,6 +5,7 @@ CREATE TABLE IF NOT EXISTS users
     password varchar(191) null,
     rocket_chat_id varchar(100) null,
     rocket_chat_password varchar(255) null,
+    mostrar_localizacao_mapa tinyint(1) default 1 not null,
     is_active tinyint(1) default 1 not null,
     spotify_client_id  varchar(255) null,
     spotify_access_token varchar(255) null,

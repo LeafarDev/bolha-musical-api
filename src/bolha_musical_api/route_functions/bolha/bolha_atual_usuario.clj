@@ -15,4 +15,4 @@
       (let [membros-bolha (not-empty (query/busca-membros-bolha query/db {:bolha_id (:id bolha)}))
             membros-bolha-com-me (map #(conj % {:me (sptfy/get-current-users-profile {} (:spotify_access_token %))}) membros-bolha)]
         (ok (conj bolha {:membros membros-bolha-com-me})))
-      (not-found! {:message (translate (:language_code user) :u-are-not-in-a-bubble)}))))
+      (not-found! {:message (translate (read-string (:language_code user)) :u-are-not-in-a-bubble)}))))

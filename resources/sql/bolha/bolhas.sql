@@ -64,7 +64,7 @@ from   users,
    bolhas
    join referencias_tamanhos_bolhas
      on referencias_tamanhos_bolhas.id = bolhas.tamanho_bolha_referencia_id
-where  users.id = :user_id
+where  users.id = :user_id and bolhas.deleted_at is null
 having distancia_metros <= referencias_tamanhos_bolhas.raio_metros
 order  by distancia_metros
 limit  0, 30;

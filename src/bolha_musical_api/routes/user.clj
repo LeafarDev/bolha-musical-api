@@ -12,16 +12,18 @@
             [bolha-musical-api.route-functions.user.devices :as rfdevs]
             [bolha-musical-api.route-functions.user.update_current_device :as rfupdatedev]
             [bolha-musical-api.locale.dicts :refer [translate]]
+            [bolha-musical-api.route-functions.user.update_preferences :as rfuppref]
+            [bolha-musical-api.validations.update_preferences_validation :refer [update-preferences-validate]]
             [bolha-musical-api.general-functions.spotify.access-token :as sat]))
 
 (defn- validate-set-localizacao
   "gambs para validar input do usuário como middleware"
   [handler]
   (fn [request]
-    (let [language (:language_code (sat/extract-user request))
+    (let [language (read-string (:language_code (sat/extract-user request)))
           result-validate ((metis/defvalidator validate-set-localizacao
-                             [:latitude :presence {:message (translate (:language language) :enter-latitude)}]
-                             [:longitude :presence {:message (translate (:language language) :enter-longitude)}])
+                                               [:latitude :presence {:message (translate (:language language) :enter-latitude)}]
+                                               [:longitude :presence {:message (translate (:language language) :enter-longitude)}])
                            (:body-params request))]
       (if (empty? result-validate)
         (handler request)
@@ -31,7 +33,7 @@
   "gambs para validar input do usuário como middleware"
   [handler]
   (fn [request]
-    (let [language (:language_code (sat/extract-user request))
+    (let [language (read-string (:language_code (sat/extract-user request)))
           result-validate ((metis/defvalidator validate-set-localizacao [:device_id :presence {:message (translate (:language language) :enter-device)}])
                            (:body-params request))]
       (if (empty? result-validate)
@@ -53,4 +55,7 @@
       (rfdevs/devices request))
     (PUT "/devices" request
       :middleware [token-auth-mw cors-mw authenticated-mw sptfy-refresh-tk-mw validate-update-current-device]
-      (rfupdatedev/update-current-device request))))
+      (rfupdatedev/update-current-device request))
+    (PUT "/preferences" request
+      :middleware [token-auth-mw cors-mw authenticated-mw sptfy-refresh-tk-mw update-preferences-validate]
+      (rfuppref/update-preferences request))))

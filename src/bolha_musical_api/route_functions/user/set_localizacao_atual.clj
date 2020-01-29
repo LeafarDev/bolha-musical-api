@@ -16,8 +16,8 @@
             body (:body-params request)
             data (conj {:point (str "POINT(" (:latitude body) " " (:longitude body) ")") :agora (df/nowMysqlFormat)} (select-keys user [:id]))
             result (query/update-user-localizacao-atual query/db data)]
-           (ok {:message (translate (:language_code user) :location-updated)})
+           (ok {:message (translate (read-string (:language_code user)) :location-updated)})
            (catch Exception e
              (log/error e)
-             (internal-server-error! {:message (translate (:language_code (sat/extract-user request))
+             (internal-server-error! {:message (translate (read-string (:language_code (sat/extract-user request)))
                                                           :cant-update-location)}))))

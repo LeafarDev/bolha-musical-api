@@ -30,8 +30,8 @@
                       :created_at       (df/nowMysqlFormat)})
            (wcar* (car/del bolha-key))
            (wcar* (car/del votos-bolha-key)))
-         (ok {:message (translate (:language_code user) :done)})
+         (ok {:message (translate (read-string (:language_code user)) :done)})
          (catch Exception e
            (log/error e)
-           (internal-server-error! {:message (translate (:language_code (sat/extract-user request))
+           (internal-server-error! {:message (translate (read-string (:language_code (sat/extract-user request)))
                                                         :failed-to-create-track)})))))

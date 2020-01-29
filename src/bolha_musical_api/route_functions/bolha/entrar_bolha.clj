@@ -35,11 +35,11 @@
             bolha-antiga (query/get-bolha-atual-usuario query/db {:user_id (:id user)})]
            (cond
              (not (bolha-existe? nova-bolha-id))
-             (not-found! {:message (translate (:language_code user) :bubble-not-found)})
+             (not-found! {:message (translate (read-string (:language_code user)) :bubble-not-found)})
              (ja-esta-na-bolha? nova-bolha-id user-id)
-             (precondition-failed! {:message (translate (:language_code user) :already-in-this-bubble)})
+             (precondition-failed! {:message (translate (read-string (:language_code user)) :already-in-this-bubble)})
              (not (bolha-disponivel? nova-bolha-id user-id))
-             (precondition-failed! {:message (translate (:language_code user) :bubble-not-available)})
+             (precondition-failed! {:message (translate (read-string (:language_code user)) :bubble-not-available)})
              :else
              (try (when-not (nil? bolha-antiga)
                     (gfbol/remover-usuario-bolha (:id bolha-antiga) user-id))
@@ -47,7 +47,7 @@
                   (rfbau/bolha-atual-usuario request)
                   (catch Exception e
                     (log/error e)
-                    (internal-server-error! {:message (translate (:language_code (sat/extract-user request))
+                    (internal-server-error! {:message (translate (read-string (:language_code (sat/extract-user request)))
                                                                  :failed-to-get-in-the-bubble)}))))))
 
 

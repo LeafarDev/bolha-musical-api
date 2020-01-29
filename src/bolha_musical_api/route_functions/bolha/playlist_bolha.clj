@@ -23,11 +23,11 @@
   "retorno a playlist atual da bolha usuário"
   [request]
   (let [user (sat/extract-user request)
-        language (:language_code user)
+        language (read-string (:language_code user))
         bolha (query/get-bolha-atual-usuario query/db {:user_id (:id user)})
         spotify-access-token (:spotify_access_token user)
         bolha-id (:id bolha)]
     (if (not-empty bolha)
       (ok (prepare-playlist bolha-id spotify-access-token language))
-      (not-found! {:message (translate (:language_code user) :u-are-not-in-a-bubble)}))))
+      (not-found! {:message (translate (read-string (:language_code user)) :u-are-not-in-a-bubble)}))))
 

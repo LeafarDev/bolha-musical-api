@@ -56,7 +56,7 @@
     (POST "/" request
       :middleware [token-auth-mw cors-mw authenticated-mw sptfy-refresh-tk-mw criar-bolha-validate]
       :summary "Recebo informações da bolha para criar"
-      (rfcbol/criar-bolha request bolha))
+      (rfcbol/criar-bolha request))
     (POST "/entrar" request
       :middleware [token-auth-mw cors-mw authenticated-mw sptfy-refresh-tk-mw]
       :body-params [id :- Integer]

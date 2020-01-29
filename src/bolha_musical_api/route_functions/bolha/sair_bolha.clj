@@ -16,8 +16,8 @@
   (let [user (sat/extract-user request)
         bolha-antiga (query/get-bolha-atual-usuario query/db {:user_id (:id user)})]
     (try (gfbol/remover-usuario-bolha (:id bolha-antiga) (:id user))
-         (ok {:message (translate (:language_code user) :done)})
+         (ok {:message (translate (read-string (:language_code user)) :done)})
          (catch Exception e
            (log/error e)
-           (internal-server-error! {:message (translate (:language_code (sat/extract-user request))
+           (internal-server-error! {:message (translate (read-string (:language_code (sat/extract-user request)))
                                                         :failed-to-get-out-the-bubble)})))))
