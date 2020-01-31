@@ -43,6 +43,7 @@ from   bolhas
      on referencias_tamanhos_bolhas.id = bolhas.tamanho_bolha_referencia_id
 where  bolhas.deleted_at is null and bolhas.referencia = :referencia
 limit  0, 1;
+
 -- :name bolhas-disponiveis
 -- :command :select
 -- :doc Busca bolhas no alcance da localização atual do usuário
@@ -111,3 +112,10 @@ select referencias_tamanhos_bolhas.*
 from referencias_tamanhos_bolhas
 where referencias_tamanhos_bolhas.deleted_at is null
 group by referencias_tamanhos_bolhas.id;
+
+-- :name update-bolha-localizacao-atual :! :n
+-- :command :update
+-- :doc Atualiza localicação atual da bolha
+update bolhas
+set referencia_raio_fixo = GeomFromText(:referencia_raio_fixo)
+where id = :id;
