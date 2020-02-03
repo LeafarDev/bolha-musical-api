@@ -102,15 +102,11 @@
   [playlist current-id]
   (first (filter #(> (:id %) current-id) playlist)))
 
-(defn- primeira-track-nao-tocada
-  [playlist]
-  (first (filter #(nil? (:started_at %)) playlist)))
-
 (defn- atualmente-tocando
   [playlist]
   (first (filter #(= 1 (:current_playing %)) playlist)))
 
-(defn- precisa-ser-skipada
+(defn- precisa-ser-skipada?
   [track-id bolha-id]
   (let [qtd-membros-ativos (:qtd (query/qtd-membros-ativos-bolha query/db {:bolha_id bolha-id}))]
     (when (pos? qtd-membros-ativos)
@@ -122,6 +118,11 @@
         (when (and (>= porcentagem-membros-votaram 40.0) (> qtd-baixavotos qtd-cimavotos))
           true)))))
 
+(defn- primeira-track-nao-tocada
+  [playlist]
+  (first (filter #(and (nil? (:started_at %))
+                       (not (precisa-ser-skipada? (:id %) (:bolha_id %))))
+                 playlist)))
 (defn- exec []
   (if-let [bolhas-ativas (not-empty (query/get-bolhas-ativas query/db))]
     (cp/pfor 4 [bolha bolhas-ativas]                        ;;; talvez desnecessário
@@ -132,23 +133,24 @@
                        (if-let [track-a-tocar (not-empty (primeira-track-nao-tocada sincronizadas))]
                          (dorun (tocar-track-para-membros (:spotify_track_id track-a-tocar) (:id bolha) (:id track-a-tocar)))))
                      (if-let [atualmente-tocando (not-empty (atualmente-tocando sincronizadas))]
-                       (when (or (precisa-ser-skipada (:id atualmente-tocando) (:id bolha))
+                       (when (or (precisa-ser-skipada? (:id atualmente-tocando) (:id bolha))
                                  (track-terminou? (c/from-sql-date (:started_at atualmente-tocando)) (:duration_ms atualmente-tocando)))
                          (query/atualiza-para-nao-execucao-track query/db (select-keys atualmente-tocando [:id]))
                          (if-let [proxima (not-empty (proxima sincronizadas (:id atualmente-tocando)))]
-                           (do (log/info "running viena:: " (proxima sincronizadas (:id atualmente-tocando)))
-                               (dorun (tocar-track-para-membros (:spotify_track_id proxima) (:id bolha) (:id proxima)))
-                               true))))))))
+                           (when-not (precisa-ser-skipada? (:id proxima) (:id bolha))
+                             (do (log/info "running viena:: " (proxima sincronizadas (:id atualmente-tocando)))
+                                 (dorun (tocar-track-para-membros (:spotify_track_id proxima) (:id bolha) (:id proxima)))
+                                 true)))))))))
     (log/info "sem bolhas")))
 
 (defjob SyncPlaylistUsersJob
-  [ctx]
-  (let [lock-key (keyword (str "lock-id-" 1))]
-    (locking lock-key
-      (do (log/info "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-          (log/info "<---------------- DO::SyncPlaylistUsersJob       ---------------->")
-          (dorun (exec))
-          (log/info "<---------------- FINISHED::SyncPlaylistUsersJob ---------------->")))))
+        [ctx]
+        (let [lock-key (keyword (str "lock-id-" 1))]
+          (locking lock-key
+            (do (log/info "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+                (log/info "<---------------- DO::SyncPlaylistUsersJob       ---------------->")
+                (dorun (exec))
+                (log/info "<---------------- FINISHED::SyncPlaylistUsersJob ---------------->")))))
 (defn go
   [& m]
   (let [s (qs/start (qs/initialize))
