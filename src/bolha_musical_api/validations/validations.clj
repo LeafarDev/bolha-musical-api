@@ -26,12 +26,17 @@
       (handler request)
       (unprocessable-entity!
        (map (fn* [rule-error]
-                 (zipmap [(first rule-error)]
-                         [(translate-messages (second rule-error) language)]))
+              (zipmap [(first rule-error)]
+                      [(translate-messages (second rule-error) language)]))
             (map vector (keys result-validate) (vals result-validate)))))))
 
 (defn metis-bool? [map key _]
   (when-not (boolean? (get map key))
+    (str "The field must be true or false.")))
+
+(defn metis-bool-or-number-bool? [map key _]
+  (when-not (or (boolean? (get map key))
+                (and (> (get map key) -2) (< (get map key) 2)))
     (str "The field must be true or false.")))
 
 (defn metis-is-keyword? [map key _]
