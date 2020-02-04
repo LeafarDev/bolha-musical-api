@@ -6,6 +6,7 @@ SELECT bolhas_membros.*,
        ST_Y(users.ultima_localizacao) as longitude,
        users.spotify_access_token,
        users.spotify_current_device,
+       users.data_ultima_localizacao,
        users.mostrar_localizacao_mapa
 FROM   bolhas_membros
        JOIN bolhas
@@ -46,3 +47,38 @@ FROM   bolhas_membros
 WHERE  bolhas_membros.bolha_id = :bolha_id
        AND bolhas_membros.deleted_at IS NULL
        AND bolhas_membros.checkout IS NULL
+
+-- :name busca-membros-fora-range-bolha
+-- :command :select
+-- :doc Busca bolha que o usuário está atualmente participando
+SELECT bolhas_membros.*,
+       St_x(users.ultima_localizacao)                  AS latitude,
+       St_y(users.ultima_localizacao)                  AS longitude,
+       referencias_tamanhos_bolhas.raio_metros         AS raio,
+       ( 6371 * Acos(Cos(Radians(St_x(users.ultima_localizacao))) * Cos(Radians(
+                     St_x(bolhas.referencia_raio_fixo))) * Cos(
+                              Radians(
+         St_y(bolhas.referencia_raio_fixo)) - Radians
+         (
+         St_y(users.ultima_localizacao))) + Sin(Radians(
+         St_x(users.ultima_localizacao))) * Sin(
+         Radians(
+         St_x(bolhas.referencia_raio_fixo)))) ) * 1000 AS distancia_metros,
+       users.spotify_access_token,
+       users.spotify_current_device,
+       users.data_ultima_localizacao,
+       users.mostrar_localizacao_mapa
+FROM   users
+       JOIN bolhas
+         ON bolhas.deleted_at IS NULL
+       JOIN bolhas_membros
+         ON bolhas_membros.bolha_id = bolhas.id
+            AND bolhas_membros.checkout IS NULL
+            AND bolhas_membros.deleted_at IS NULL
+            AND bolhas_membros.user_id = users.id
+       JOIN referencias_tamanhos_bolhas
+         ON referencias_tamanhos_bolhas.id = bolhas.tamanho_bolha_referencia_id
+WHERE  users.deleted_at IS NULL
+HAVING distancia_metros > ( referencias_tamanhos_bolhas.raio_metros
+                            + 20 )
+ORDER  BY distancia_metros

@@ -6,9 +6,16 @@
 (defn remover-usuario-bolha
   "Remove usuário da bolha e de seu chat"
   [bolha-id user-id]
-  (let [bolha (query/get-bolha-by-id query/db {:id bolha-id}) user (query/get-user-by-id query/db {:id user-id})] (rocket/remover-usuario-canal (:rocket_chat_canal_id bolha) (:rocket_chat_id user)) (query/remove-usuario-bolha query/db {:checkout (df/nowMysqlFormat), :user_id user-id})))
+  (let [bolha (query/get-bolha-by-id query/db {:id bolha-id}) user (query/get-user-by-id query/db {:id user-id})
+        membros (query/busca-membros-bolha query/db {:bolha_id bolha-id})]
+    (rocket/remover-usuario-canal (:rocket_chat_canal_id bolha) (:rocket_chat_id user))
+    (query/remove-usuario-bolha query/db {:checkout (df/nowMysqlFormat), :user_id user-id})
+    (when (= 1 (count membros))
+      (query/remover-bolha query/db {:id (:id bolha) :agora (df/nowMysqlFormat)}))))
 
 (defn adicionar-usuario-bolha
   "Adiciona o usuário na bolha e no chat"
   [bolha-id user-id]
-  (let [bolha (query/get-bolha-by-id query/db {:id bolha-id}) user (query/get-user-by-id query/db {:id user-id})] (rocket/adicionar-usuario-canal (:rocket_chat_canal_id bolha) (:rocket_chat_id user)) (query/insert-membro-bolha query/db {:checkin (df/nowMysqlFormat), :user_id user-id, :bolha_id bolha-id})))
+  (let [bolha (query/get-bolha-by-id query/db {:id bolha-id}) user (query/get-user-by-id query/db {:id user-id})]
+    (rocket/adicionar-usuario-canal (:rocket_chat_canal_id bolha) (:rocket_chat_id user))
+    (query/insert-membro-bolha query/db {:checkin (df/nowMysqlFormat), :user_id user-id, :bolha_id bolha-id})))

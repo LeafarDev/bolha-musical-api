@@ -1,23 +1,23 @@
 (ns bolha-musical-api.task.sync-playlist-users
   "Contem task periódica para sincronizar o player dos usuários"
   (:require [clojurewerkz.quartzite.scheduler :as qs]
+            [clojurewerkz.quartzite.schedule.simple :refer [repeat-forever with-interval-in-milliseconds]]
+            [clojurewerkz.quartzite.triggers :as t]
+            [clojurewerkz.quartzite.jobs :as j]
+            [clojurewerkz.quartzite.jobs :refer [defjob]]
+            [clojurewerkz.quartzite.schedule.simple :refer [schedule repeat-forever with-interval-in-milliseconds]]
+            [com.climate.claypoole :as cp]
             [clj-time.core :as time-clj]
             [clj-time.local :as l]
             [clj-time.coerce :as c]
             [bolha-musical-api.query-defs :as query]
             [bolha-musical-api.general-functions.date-formatters :as df]
             [clojure.tools.logging :as log]
-            [clojurewerkz.quartzite.schedule.simple :refer [repeat-forever with-interval-in-milliseconds]]
             [clj-spotify.core :as sptfy]
-            [clojurewerkz.quartzite.scheduler :as qs]
-            [com.climate.claypoole :as cp]
-            [clojurewerkz.quartzite.triggers :as t]
-            [clojurewerkz.quartzite.jobs :as j]
+            [bolha-musical-api.task.reciclagem_users_bolha :as taskrecicla]
             [bolha-musical-api.redis_defs :refer [wcar*]]
             [taoensso.carmine :as car :refer (wcar)]
-            [clojurewerkz.quartzite.jobs :refer [defjob]]
-            [bolha-musical-api.util :as u]
-            [clojurewerkz.quartzite.schedule.simple :refer [schedule repeat-forever with-interval-in-milliseconds]]))
+            [bolha-musical-api.util :as u]))
 
 (defn- update-time-track
   [previous-track current-track]
@@ -79,6 +79,10 @@
       device-id
       (:id (first devices)))))
 
+(defn- membro-esta-sumido?
+  [data_ultima_localizacao]
+  (>= 30 (df/intervalo-segundos (c/from-sql-date data_ultima_localizacao) (l/local-now))))
+
 (defn- tocar-track-para-membros
   [track-id bolha-id track-id-interno]
   (let [membros (query/busca-membros-bolha query/db {:bolha_id bolha-id})
@@ -88,11 +92,12 @@
     (del-key bolha-key)
     (del-key votos-bolha-key)
     (cp/pfor 4 [membro membros]
-             (let [devices (:devices (sptfy/get-current-users-available-devices {} (:spotify_access_token membro)))
-                   current-device-id-selected (:spotify_current_device membro)
-                   device-id (device-id-or-first-existent-id devices current-device-id-selected)]
-               (when-not (nil? device-id)
-                 (processa-track-membro track-id track-id-interno device-id (:spotify_access_token membro)))))))
+             (when-not (membro-esta-sumido? (:data_ultima_localizacao membro))
+               (let [devices (:devices (sptfy/get-current-users-available-devices {} (:spotify_access_token membro)))
+                     current-device-id-selected (:spotify_current_device membro)
+                     device-id (device-id-or-first-existent-id devices current-device-id-selected)]
+                 (when-not (nil? device-id)
+                   (processa-track-membro track-id track-id-interno device-id (:spotify_access_token membro))))))))
 
 (defn- nenhuma-tocando?
   [playlist]
@@ -144,13 +149,13 @@
     (log/info "sem bolhas")))
 
 (defjob SyncPlaylistUsersJob
-        [ctx]
-        (let [lock-key (keyword (str "lock-id-" 1))]
-          (locking lock-key
-            (do (log/info "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-                (log/info "<---------------- DO::SyncPlaylistUsersJob       ---------------->")
-                (dorun (exec))
-                (log/info "<---------------- FINISHED::SyncPlaylistUsersJob ---------------->")))))
+  [ctx]
+  (let [lock-key (keyword (str "lock-id-" 1))]
+    (locking lock-key
+      (do (log/info "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+          (log/info "<---------------- DO::SyncPlaylistUsersJob       ---------------->")
+          (dorun (exec))
+          (log/info "<---------------- FINISHED::SyncPlaylistUsersJob ---------------->")))))
 (defn go
   [& m]
   (let [s (qs/start (qs/initialize))
@@ -167,4 +172,5 @@
 
 (defn init []
   (log/info "starting quartzite")
-  (go))
+  (go)
+  (taskrecicla/schecule-reciclagem))

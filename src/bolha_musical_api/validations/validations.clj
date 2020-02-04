@@ -26,8 +26,8 @@
       (handler request)
       (unprocessable-entity!
        (map (fn* [rule-error]
-              (zipmap [(first rule-error)]
-                      [(translate-messages (second rule-error) language)]))
+                 (zipmap [(first rule-error)]
+                         [(translate-messages (second rule-error) language)]))
             (map vector (keys result-validate) (vals result-validate)))))))
 
 (defn metis-bool? [map key _]

@@ -67,13 +67,15 @@ WHERE  track_interno_id = :track_interno_id
 -- :name get-votos-track-playlist-validos
 -- :command :select
 -- :doc Busca votos válidos de uma track pelo seu track id interno
-select bolhas_playlists_tracks_votos.*
-from bolhas_playlists_tracks_votos
-         join bolhas_playlists_tracks on bolhas_playlists_tracks.id =
-                                         bolhas_playlists_tracks_votos.track_interno_id
-    and bolhas_playlists_tracks.deleted_at is null
-         join bolhas_membros on bolhas_membros.bolha_id = bolhas_playlists_tracks.bolha_id
-    and bolhas_membros.deleted_at is null
-where bolhas_playlists_tracks_votos.track_interno_id = :track_interno_id
-  and bolhas_playlists_tracks_votos.deleted_at is null
-group by bolhas_playlists_tracks_votos.id
+SELECT bolhas_playlists_tracks_votos.*
+FROM   bolhas_playlists_tracks_votos
+       JOIN bolhas_playlists_tracks
+         ON bolhas_playlists_tracks.id =
+            bolhas_playlists_tracks_votos.track_interno_id
+            AND bolhas_playlists_tracks.deleted_at IS NULL
+       JOIN bolhas_membros
+         ON bolhas_membros.bolha_id = bolhas_playlists_tracks.bolha_id
+            AND bolhas_membros.deleted_at IS NULL
+WHERE  bolhas_playlists_tracks_votos.track_interno_id = :track_interno_id
+       AND bolhas_playlists_tracks_votos.deleted_at IS NULL
+GROUP  BY bolhas_playlists_tracks_votos.id;

@@ -40,3 +40,7 @@
 (defn intervalo-minutos
   [date1 date2]
   (t/in-minutes (t/interval date1 date2)))
+
+(defn intervalo-segundos
+  [date1 date2]
+  (t/in-secs (t/interval date1 date2)))

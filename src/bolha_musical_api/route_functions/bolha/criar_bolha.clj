@@ -6,6 +6,7 @@
             [bolha-musical-api.general-functions.spotify.access-token :as sat]
             [bolha-musical-api.general-functions.date-formatters :as df]
             [bolha-musical-api.locale.dicts :refer [translate]]
+            [bolha-musical-api.general-functions.spotify.bolha :as gfbol]
             [bolha-musical-api.general-functions.rocket-chat.rocket :as rocket]
             [bolha-musical-api.route-functions.bolha.bolha-atual-usuario :as rfbau]
             [clojure.set :refer :all]))
@@ -21,17 +22,16 @@
             data-prep-insert (conj bolha {:referencia_raio_fixo (str "POINT(" (:latitude user) " " (:longitude user) ")")
                                           :referencia           referencia
                                           :agora                (df/nowMysqlFormat)
-                                          :user_lider_id              (:id user)
-                                          :rocket_chat_canal_id (:_id rocker-chat-room-criado)})
-            insert-result (query/criar-bolha query/db data-prep-insert)
-            bolha-criada (query/get-bolha-by-referencia query/db {:referencia referencia})
-            remove-usuario-bolhas-result (query/remove-usuario-bolha query/db {:user_id (:id user) :checkout (df/nowMysqlFormat)})
-            add-usuario-bolha-criada-result (query/insert-membro-bolha query/db {:bolha_id (:id bolha-criada),
-                                                                                 :user_id  (:id user)
-                                                                                 :checkin  (df/nowMysqlFormat)})]
-           (do (when-not (nil? bolha-antiga)
-                 (rocket/remover-usuario-canal (:rocket_chat_canal_id bolha-antiga) (:rocket_chat_id user)))
-               (rfbau/bolha-atual-usuario request))
+                                          :user_lider_id        (:id user)
+                                          :rocket_chat_canal_id (:_id rocker-chat-room-criado)})]
+           (when-not (nil? bolha-antiga)
+             (gfbol/remover-usuario-bolha (:id bolha-antiga) (:id user)))
+           (query/criar-bolha query/db data-prep-insert)
+           (query/insert-membro-bolha query/db {:bolha_id (:id (query/get-bolha-by-referencia query/db
+                                                                                              {:referencia referencia})),
+                                                :user_id  (:id user) :checkin (df/nowMysqlFormat)})
+
+           (ok (query/get-bolha-atual-usuario query/db {:user_id (:id user)}))
            (catch Exception e
              (log/error e)
              (internal-server-error! {:message (translate (read-string (:language_code (sat/extract-user request)))
