@@ -43,4 +43,4 @@
 
 (defn intervalo-segundos
   [date1 date2]
-  (t/in-secs (t/interval date1 date2)))
+  (t/in-seconds (t/interval date1 date2)))
