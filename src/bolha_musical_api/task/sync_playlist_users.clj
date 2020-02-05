@@ -92,7 +92,8 @@
     (del-key bolha-key)
     (del-key votos-bolha-key)
     (cp/pfor 4 [membro membros]
-             (when-not (membro-esta-sumido? (:data_ultima_localizacao membro))
+             (when-not (and (membro-esta-sumido? (:data_ultima_localizacao membro))
+                            (:tocar_track_automaticamente membro))
                (let [devices (:devices (sptfy/get-current-users-available-devices {} (:spotify_access_token membro)))
                      current-device-id-selected (:spotify_current_device membro)
                      device-id (device-id-or-first-existent-id devices current-device-id-selected)]

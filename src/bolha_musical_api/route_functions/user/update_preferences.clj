@@ -1,6 +1,7 @@
 (ns bolha-musical-api.route-functions.user.update_preferences
   (:require [ring.util.http-response :refer :all]
             [try-let :refer [try-let]]
+            [clj-spotify.core :as sptfy]
             [bolha-musical-api.query-defs :as query]
             [bolha-musical-api.general-functions.spotify.access-token :as sat]
             [bolha-musical-api.locale.dicts :refer [translate]]
@@ -20,7 +21,8 @@
             novas-preferencias (-> data
                                    (assoc :language_code (corrige-language-code (:language_code data))))
             prep-data (conj {:id (:id user)} novas-preferencias)]
-           (log/info novas-preferencias)
+           (when (= false (:tocar_track_automaticamente novas-preferencias))
+             (sptfy/pause-a-users-playback {} (:spotify_access_token user)))
            (query/update-user-preferences query/db prep-data)
            (ok {:message (translate (read-string (:language_code (sat/extract-user request))) :done)})
            (catch Exception e

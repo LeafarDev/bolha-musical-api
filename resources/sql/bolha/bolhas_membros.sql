@@ -7,7 +7,8 @@ SELECT bolhas_membros.*,
        users.spotify_access_token,
        users.spotify_current_device,
        users.data_ultima_localizacao,
-       users.mostrar_localizacao_mapa
+       users.mostrar_localizacao_mapa,
+       users.tocar_track_automaticamente
 FROM   bolhas_membros
        JOIN bolhas
          ON bolhas.id = bolhas_membros.bolha_id
@@ -67,7 +68,8 @@ SELECT bolhas_membros.*,
        users.spotify_access_token,
        users.spotify_current_device,
        users.data_ultima_localizacao,
-       users.mostrar_localizacao_mapa
+       users.mostrar_localizacao_mapa,
+       users.tocar_track_automaticamente
 FROM   users
        JOIN bolhas
          ON bolhas.deleted_at IS NULL

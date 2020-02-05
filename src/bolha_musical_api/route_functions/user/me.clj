@@ -17,7 +17,7 @@
             me-key (str "me-" id-user)
             token (:spotify_access_token user)
             user-data (-> user
-                          (select-keys [:language_code :mostrar_localizacao_mapa]))
+                          (select-keys [:language_code :mostrar_localizacao_mapa :tocar_track_automaticamente]))
             user-me (rmember me-key 3600 #(sptfy/get-current-users-profile {} token))
             rocket-token (rocket/user-token user)]
            ; TODO validar a resposta do spotify, não dá exception na call mesmo dando 401

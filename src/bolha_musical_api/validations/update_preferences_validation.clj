@@ -10,6 +10,8 @@
   [:language_code [:presence {:message ":field-required"}]
    ['metis-is-keyword? {:message ":wrong-formatting"}]]
   [:mostrar_localizacao_mapa [:presence {:message ":field-required"}]
+   ['metis-bool? {:message ":field-must-be-boolean"}]]
+  [:tocar_track_automaticamente [:presence {:message ":field-required"}]
    ['metis-bool? {:message ":field-must-be-boolean"}]])
 
 (defn update-preferences-validate

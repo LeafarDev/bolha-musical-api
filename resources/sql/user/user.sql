@@ -70,7 +70,8 @@ where id = :id;
 -- :doc Atualiza preferencias do usuário
 update users
 set mostrar_localizacao_mapa = :mostrar_localizacao_mapa,
-    language_code        = :language_code
+    language_code        = :language_code,
+    tocar_track_automaticamente = :tocar_track_automaticamente
 where id = :id;
 
 -- :name update-user-spotify-refresh-token :! :n
