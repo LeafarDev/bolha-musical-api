@@ -53,6 +53,9 @@
     (GET "/devices" request
       :middleware [token-auth-mw cors-mw authenticated-mw sptfy-refresh-tk-mw]
       (rfdevs/devices request))
+    (GET "/following/contains" request
+      :middleware [token-auth-mw cors-mw authenticated-mw sptfy-refresh-tk-mw]
+      (rfdevs/devices request))
     (PUT "/devices" request
       :middleware [token-auth-mw cors-mw authenticated-mw sptfy-refresh-tk-mw validate-update-current-device]
       (rfupdatedev/update-current-device request))
