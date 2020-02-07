@@ -3,7 +3,7 @@
             [clj-spotify.core :as sptfy]
             [bolha-musical-api.util :refer [partition-by-max-sized-piece]]
             [bolha-musical-api.query-defs :as query]
-            [bolha-musical-api.redis_defs :refer [wcar*]]
+            [bolha-musical-api.redis-defs :refer [wcar*]]
             [bolha-musical-api.util :refer [rmember]]
             [taoensso.carmine :as car :refer (wcar)]
             [clojure.set :refer :all]

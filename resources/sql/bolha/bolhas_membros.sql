@@ -30,7 +30,8 @@ values (:bolha_id ,  :user_id, :checkin);
 -- :command :insert
 -- :doc Tiro o usuário de qualquer bolha que esteja
 update bolhas_membros
-set checkout = :checkout
+set checkout = :checkout,
+    foi_expulso = :foi_expulso
 where user_id = :user_id and checkout is null
 
 -- :name qtd-membros-ativos-bolha

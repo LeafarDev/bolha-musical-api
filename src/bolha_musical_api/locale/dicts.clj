@@ -32,7 +32,8 @@
                      :between                      "Value must be between {1} and {2}"
                      :is-not-greater-than          "The field must have length less than {1} characters."
                      :wrong-formatting             "wrong formatting"
-                     :not-found                    "Not found"}
+                     :not-found                    "Not found"
+                     :cant-do-that                 "You can't do that"}
 
    :pt-br           {:enter-latitude               "Informe a latitude"
                      :enter-longitude              "Informe a longitude"
@@ -64,7 +65,8 @@
                      :between                      "Valor tem que estar entre {1} e {2}"
                      :is-not-greater-than          "O campo debe ter um tamanho de no máximo {1} caracteres."
                      :wrong-formatting             "Formato inválido"
-                     :not-found                    "Não encontrado"}
+                     :not-found                    "Não encontrado"
+                     :cant-do-that                 "Você não pode fazer isso"}
    :tongue/fallback :pt-br})
 
 (def translate                                              ;; [locale key & args] => string

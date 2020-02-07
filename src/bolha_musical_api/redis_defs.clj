@@ -1,4 +1,4 @@
-(ns bolha-musical-api.redis_defs
+(ns bolha-musical-api.redis-defs
   (:require
    [taoensso.carmine :as car :refer (wcar)]
    [environ.core :refer [env]]))

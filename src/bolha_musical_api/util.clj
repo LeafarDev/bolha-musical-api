@@ -4,7 +4,7 @@
              [string :as str]]
             [flatland.ordered.map :refer [ordered-map]]
             [ring.util.http-response :refer :all]
-            [bolha-musical-api.redis_defs :refer [wcar*]]
+            [bolha-musical-api.redis-defs :refer [wcar*]]
             [taoensso.carmine :as car :refer (wcar)]
             [clojure.tools.logging :as log])
   (:import org.apache.commons.validator.routines.UrlValidator))

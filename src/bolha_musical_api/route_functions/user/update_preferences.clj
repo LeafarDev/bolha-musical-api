@@ -1,4 +1,4 @@
-(ns bolha-musical-api.route-functions.user.update_preferences
+(ns bolha-musical-api.route-functions.user.update-preferences
   (:require [ring.util.http-response :refer :all]
             [try-let :refer [try-let]]
             [clj-spotify.core :as sptfy]

@@ -6,7 +6,7 @@
             [clojure.set :refer :all]
             [bolha-musical-api.locale.dicts :refer [translate]]
             [bolha-musical-api.util :refer [rmember]]
-            [bolha-musical-api.redis_defs :refer [wcar*]]
+            [bolha-musical-api.redis-defs :refer [wcar*]]
             [taoensso.carmine :as car :refer (wcar)]
             [bolha-musical-api.general-functions.spotify.track :refer [relacionar-tracks-local-com-spotify
                                                                        relacionar-tracks-playlist-user-saved

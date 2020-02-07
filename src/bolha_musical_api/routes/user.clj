@@ -12,11 +12,11 @@
             [bolha-musical-api.route-functions.user.devices :as rfdevs]
             [bolha-musical-api.route-functions.user.update_current_device :as rfupdatedev]
             [bolha-musical-api.locale.dicts :refer [translate]]
-            [bolha-musical-api.route-functions.user.update_preferences :as rfuppref]
+            [bolha-musical-api.route-functions.user.update-preferences :as rfuppref]
             [bolha-musical-api.route-functions.user.following :as rffollowing]
             [bolha-musical-api.route-functions.user.follow :as rfollow]
             [bolha-musical-api.route-functions.user.unfollow :as rfunollow]
-            [bolha-musical-api.validations.update_preferences_validation :refer [update-preferences-validate]]
+            [bolha-musical-api.validations.update-preferences-validation :refer [update-preferences-validate]]
             [bolha-musical-api.general-functions.spotify.access-token :as sat]))
 
 (defn- validate-set-localizacao

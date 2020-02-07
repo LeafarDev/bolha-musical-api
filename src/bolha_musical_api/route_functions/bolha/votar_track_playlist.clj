@@ -8,7 +8,7 @@
             [clojure.set :refer :all]
             [bolha-musical-api.locale.dicts :refer [translate]]
             [bolha-musical-api.query-defs :as query]
-            [bolha-musical-api.redis_defs :refer [wcar*]]
+            [bolha-musical-api.redis-defs :refer [wcar*]]
             [taoensso.carmine :as car :refer (wcar)]))
 
 (defn votar-track-playlist

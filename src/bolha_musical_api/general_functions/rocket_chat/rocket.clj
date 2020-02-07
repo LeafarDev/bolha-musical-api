@@ -1,7 +1,7 @@
 (ns bolha-musical-api.general-functions.rocket-chat.rocket
   (:require [clj-http.client :as client]
             [environ.core :refer [env]]
-            [bolha-musical-api.redis_defs :refer [wcar*]]
+            [bolha-musical-api.redis-defs :refer [wcar*]]
             [taoensso.carmine :as car :refer (wcar)]
             [clojure.set :refer :all]
             [bolha-musical-api.util :refer [rmember]]

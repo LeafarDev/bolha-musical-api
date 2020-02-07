@@ -1,4 +1,4 @@
-(ns bolha-musical-api.validations.update_preferences_validation
+(ns bolha-musical-api.validations.update-preferences-validation
   (:require [compojure.api.sweet :refer :all]
             [ring.util.http-response :refer :all]
             [bolha-musical-api.validations.validations :refer :all]

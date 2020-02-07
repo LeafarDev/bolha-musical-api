@@ -1,4 +1,4 @@
-(ns bolha-musical-api.validations.votar_track_validation
+(ns bolha-musical-api.validations.votar-track-validation
   (:require [compojure.api.sweet :refer :all]
             [ring.util.http-response :refer :all]
             [bolha-musical-api.validations.validations :refer [metis-bool? metis-bool-or-number-bool? call-validation]]

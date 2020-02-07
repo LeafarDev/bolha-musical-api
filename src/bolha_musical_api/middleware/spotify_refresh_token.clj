@@ -15,12 +15,12 @@
     true))
 
 (defn- falta-cinco-minutos-ou-menos?
-  [spotify_token_expires_at]
-  (>= 5 (df/intervalo-minutos (l/local-now) spotify_token_expires_at)))
+  [spotify-token-expires-at]
+  (>= 5 (df/intervalo-minutos (l/local-now) spotify-token-expires-at)))
 
 (defn- ja-expirou?
-  [spotify_token_expires_at]
-  (df/date-greater? (l/local-now) spotify_token_expires_at))
+  [spotify-token-expires-at]
+  (df/date-greater? (l/local-now) spotify-token-expires-at))
 
 (defn sptfy-refresh-tk-mw
   "Pego o usuário apartir do token, e verifico se é preciso utilizar refresh
@@ -28,9 +28,9 @@
   [handler]
   (fn [request]
     (try-let [user (sat/extract-user request)
-              spotify_token_expires_at (c/from-sql-date (:spotify_token_expires_at user))]
-             (if-not (ja-expirou? spotify_token_expires_at)
-               (if (falta-cinco-minutos-ou-menos? spotify_token_expires_at)
+              spotify-token-expires-at (c/from-sql-date (:spotify_token_expires_at user))]
+             (if-not (ja-expirou? spotify-token-expires-at)
+               (if (falta-cinco-minutos-ou-menos? spotify-token-expires-at)
                  ;;; Essa função chama o refresh no spotify e atualiza usuário com o novo token
                  (if (callRefresh user)
                    ;;; Se deu tudo certo ao chamar o reflesh no spotify, continuo normalmente

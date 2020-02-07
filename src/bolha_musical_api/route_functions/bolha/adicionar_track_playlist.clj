@@ -6,7 +6,7 @@
             [bolha-musical-api.general-functions.spotify.access-token :as sat]
             [bolha-musical-api.general-functions.date-formatters :as df]
             [bolha-musical-api.query-defs :as query]
-            [bolha-musical-api.redis_defs :refer [wcar*]]
+            [bolha-musical-api.redis-defs :refer [wcar*]]
             [taoensso.carmine :as car :refer (wcar)]
             [clj-spotify.core :as sptfy]
             [clj-time.core :as t]
