@@ -15,6 +15,7 @@
             [bolha-musical-api.route-functions.user.update_preferences :as rfuppref]
             [bolha-musical-api.route-functions.user.following :as rffollowing]
             [bolha-musical-api.route-functions.user.follow :as rfollow]
+            [bolha-musical-api.route-functions.user.unfollow :as rfunollow]
             [bolha-musical-api.validations.update_preferences_validation :refer [update-preferences-validate]]
             [bolha-musical-api.general-functions.spotify.access-token :as sat]))
 
@@ -59,6 +60,10 @@
       :middleware [token-auth-mw cors-mw authenticated-mw sptfy-refresh-tk-mw]
       :summary "Sigo um usuário"
       (rfollow/follow request))
+    (PUT "/unfollow" request
+      :middleware [token-auth-mw cors-mw authenticated-mw sptfy-refresh-tk-mw]
+      :summary "Desfazer seguir um usuário"
+      (rfunollow/unfollow request))
     (GET "/following/contains" request
       :middleware [token-auth-mw cors-mw authenticated-mw sptfy-refresh-tk-mw]
       :summary "Verifico se o usuário está seguindo outro usuário"
