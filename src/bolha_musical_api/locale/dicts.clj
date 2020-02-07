@@ -31,7 +31,8 @@
                      :field-must-be-boolean        "The field must be true or false."
                      :between                      "Value must be between {1} and {2}"
                      :is-not-greater-than          "The field must have length less than {1} characters."
-                     :wrong-formatting             "wrong formatting"}
+                     :wrong-formatting             "wrong formatting"
+                     :not-found                    "Not found"}
 
    :pt-br           {:enter-latitude               "Informe a latitude"
                      :enter-longitude              "Informe a longitude"
@@ -62,7 +63,8 @@
                      :field-must-be-boolean        "O campo deve ser verdadeiro ou falso"
                      :between                      "Valor tem que estar entre {1} e {2}"
                      :is-not-greater-than          "O campo debe ter um tamanho de no máximo {1} caracteres."
-                     :wrong-formatting             "Formato inválido"}
+                     :wrong-formatting             "Formato inválido"
+                     :not-found                    "Não encontrado"}
    :tongue/fallback :pt-br})
 
 (def translate                                              ;; [locale key & args] => string

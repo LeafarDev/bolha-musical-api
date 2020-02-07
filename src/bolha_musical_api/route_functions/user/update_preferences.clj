@@ -18,10 +18,9 @@
   [request]
   (try-let [user (sat/extract-user request)
             data (:body-params request)
-            novas-preferencias (-> data
-                                   (assoc :language_code (corrige-language-code (:language_code data))))
+            novas-preferencias (update-in data [:language_code] corrige-language-code)
             prep-data (conj {:id (:id user)} novas-preferencias)]
-           (when (= false (:tocar_track_automaticamente novas-preferencias))
+           (when (false? (:tocar_track_automaticamente novas-preferencias))
              (sptfy/pause-a-users-playback {} (:spotify_access_token user)))
            (query/update-user-preferences query/db prep-data)
            (ok {:message (translate (read-string (:language_code (sat/extract-user request))) :done)})

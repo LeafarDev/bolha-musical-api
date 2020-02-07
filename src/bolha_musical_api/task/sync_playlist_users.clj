@@ -144,9 +144,9 @@
                          (query/atualiza-para-nao-execucao-track query/db (select-keys atualmente-tocando [:id]))
                          (if-let [proxima (not-empty (proxima sincronizadas (:id atualmente-tocando)))]
                            (when-not (precisa-ser-skipada? (:id proxima) (:id bolha))
-                             (do (log/info "running viena:: " (proxima sincronizadas (:id atualmente-tocando)))
-                                 (dorun (tocar-track-para-membros (:spotify_track_id proxima) (:id bolha) (:id proxima)))
-                                 true)))))))))
+                             (log/info "running viena:: " (proxima sincronizadas (:id atualmente-tocando)))
+                             (dorun (tocar-track-para-membros (:spotify_track_id proxima) (:id bolha) (:id proxima)))
+                             true))))))))
     (log/info "sem bolhas")))
 
 (defjob SyncPlaylistUsersJob
