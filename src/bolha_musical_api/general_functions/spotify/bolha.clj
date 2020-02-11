@@ -12,7 +12,7 @@
      (rocket/remover-usuario-canal (:rocket_chat_canal_id bolha) (:rocket_chat_id user))
      (query/remove-usuario-bolha query/db {:checkout (df/nowMysqlFormat),
                                            :user_id  user-id
-                                           :expulso  expulso})
+                                           :foi_expulso  expulso})
      (when (= 1 (count membros))
        (query/remover-bolha query/db {:id    (:id bolha)
                                       :agora (df/nowMysqlFormat)})))))
