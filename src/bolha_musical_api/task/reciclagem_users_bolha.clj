@@ -14,18 +14,20 @@
 
 (defn- exec
   []
-  (let [membros-invalidos (query/busca-membros-fora-range-bolha query/db {})]
-    (cp/pfor 4 [membro membros-invalidos]
+  (let [membros-fora-range (query/busca-membros-fora-range-bolha query/db {})
+        membros-inativos (query/busca-membros-inativos-bolha query/db {})
+        membros (distinct (concat membros-fora-range (map #(dissoc % :ultima_acao) membros-inativos)))]
+    (cp/pfor 4 [membro membros]
              (gfbol/remover-usuario-bolha (:bolha_id membro) (:user_id membro)))))
 
 (defjob ReciclagemUserBolhas
-  [ctx]
-  (let [lock-key (keyword (str "lock-id-" 1))]
-    (locking lock-key
-      (do (log/info "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-          (log/info "<---------------- DO::ReciclagemUserBolhas       ---------------->")
-          (dorun (exec))
-          (log/info "<---------------- FINISHED::ReciclagemUserBolhas ---------------->")))))
+        [ctx]
+        (let [lock-key (keyword (str "lock-id-" 1))]
+          (locking lock-key
+            (do (log/info "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+                (log/info "<---------------- DO::ReciclagemUserBolhas       ---------------->")
+                (dorun (exec))
+                (log/info "<---------------- FINISHED::ReciclagemUserBolhas ---------------->")))))
 
 (defn schecule-reciclagem
   [& m]

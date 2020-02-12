@@ -52,7 +52,7 @@ WHERE  bolhas_membros.bolha_id = :bolha_id
 
 -- :name busca-membros-fora-range-bolha
 -- :command :select
--- :doc Busca bolha que o usuário está atualmente participando
+-- :doc Busca bolha que o usuário está fora de range
 SELECT bolhas_membros.*,
        St_x(users.ultima_localizacao)                  AS latitude,
        St_y(users.ultima_localizacao)                  AS longitude,
@@ -85,3 +85,38 @@ WHERE  users.deleted_at IS NULL
 HAVING distancia_metros > ( referencias_tamanhos_bolhas.raio_metros
                             + 20 )
 ORDER  BY distancia_metros
+
+-- :name busca-membros-inativos-bolha
+-- :command :select
+-- :doc Busca bolha que o usuário está atualmente inativo
+SELECT bolhas_membros.*,
+       St_x(users.ultima_localizacao)                  AS latitude,
+       St_y(users.ultima_localizacao)                  AS longitude,
+       referencias_tamanhos_bolhas.raio_metros         AS raio,
+       ( 6371 * Acos(Cos(Radians(St_x(users.ultima_localizacao))) * Cos(Radians(
+                     St_x(bolhas.referencia_raio_fixo))) * Cos(
+                              Radians(
+         St_y(bolhas.referencia_raio_fixo)) - Radians
+         (
+         St_y(users.ultima_localizacao))) + Sin(Radians(
+         St_x(users.ultima_localizacao))) * Sin(
+         Radians(
+         St_x(bolhas.referencia_raio_fixo)))) ) * 1000 AS distancia_metros,
+       users.spotify_access_token,
+       users.spotify_current_device,
+       users.data_ultima_localizacao,
+       users.mostrar_localizacao_mapa,
+       users.tocar_track_automaticamente,
+       TIMESTAMPDIFF(MINUTE , data_ultima_localizacao, now()) AS ultima_acao
+FROM   users
+       JOIN bolhas
+         ON bolhas.deleted_at IS NULL
+       JOIN bolhas_membros
+         ON bolhas_membros.bolha_id = bolhas.id
+            AND bolhas_membros.checkout IS NULL
+            AND bolhas_membros.deleted_at IS NULL
+            AND bolhas_membros.user_id = users.id
+       JOIN referencias_tamanhos_bolhas
+         ON referencias_tamanhos_bolhas.id = bolhas.tamanho_bolha_referencia_id
+WHERE  users.deleted_at IS NULL
+HAVING ultima_acao > 50
