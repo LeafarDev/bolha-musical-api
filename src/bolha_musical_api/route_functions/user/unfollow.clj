@@ -16,5 +16,5 @@
       (do
         (sptfy/unfollow-artists-or-users {:ids spotify_client_id :type "user"} (:spotify_access_token user))
         (ok {:message (translate (read-string (:language_code user)) :done)}))
-      (internal-server-error! {:message (translate (read-string (:language_code user)) :error)}))))
+      (not-found! {:message (translate (read-string (:language_code user)) :error)}))))
 
