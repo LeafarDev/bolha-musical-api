@@ -4,6 +4,7 @@
             [try-let :refer [try-let]]
             [bolha-musical-api.general-functions.spotify.access-token :as sat]
             [bolha-musical-api.general-functions.spotify.track :as gftrack]
+            [bolha-musical-api.util :refer [rmember]]
             [bolha-musical-api.locale.dicts :refer [translate]]))
 
 (defn search
@@ -12,5 +13,5 @@
   (let [user (sat/extract-user request)]
     ; TODO validar a resposta do spotify, não dá exception na call mesmo dando 401
     (if (not-empty query)
-      (ok (:tracks (sptfy/search {:q query :type "track" :market "BR" :limit 30 :offset 0} (:spotify_access_token user))))
-      (ok (gftrack/get-user-top-tracks (:spotify_access_token user))))))
+      (ok (:tracks (rmember (str "search-" query) 3600 #(sptfy/search {:q query :type "track" :market "BR" :limit 30 :offset 0} (:spotify_access_token user)))))
+      (ok (rmember (str "get-user-top-tracks-" (:id user)) 7200 #(gftrack/get-user-top-tracks (:spotify_access_token user)))))))

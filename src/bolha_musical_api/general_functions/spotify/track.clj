@@ -50,9 +50,9 @@
 (defn check-users-saved-tracks
   [tracks-ids spotify-access-token]
   (let [pedacos-tracks (partition-by-max-sized-piece 50 tracks-ids)
-        relacao-curtidas (map #(sptfy/check-users-saved-tracks {:ids (clojure.string/join "," %)} spotify-access-token) pedacos-tracks)]
-    (rmember (str "saved-" spotify-access-token) 25
-             (map #(zipmap [:saved] [%]) (reduce concat relacao-curtidas)))))
+        relacao-curtidas (rmember (str "saved-" spotify-access-token) 60
+                                  #(map (fn* [pedaco] (sptfy/check-users-saved-tracks {:ids (clojure.string/join "," pedaco)} spotify-access-token)) pedacos-tracks))]
+    (map #(zipmap [:saved] [%]) (reduce concat relacao-curtidas))))
 
 (defn relacionar-tracks-playlist-user-saved
   [tracks-playlist token]
