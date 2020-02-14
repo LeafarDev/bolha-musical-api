@@ -13,7 +13,6 @@
   (let [user (sat/extract-user request)
         data (:body-params request)
         spotify_client_id (:id data)]
-    (log/info (str "AEEEEEEEEEEEEEEEEEEEEE" data))
     (if-not (nil? spotify_client_id)
       (do
         (sptfy/follow-artists-or-users {:ids spotify_client_id :type "user"} (:spotify_access_token user))

@@ -120,3 +120,29 @@ FROM   users
          ON referencias_tamanhos_bolhas.id = bolhas.tamanho_bolha_referencia_id
 WHERE  users.deleted_at IS NULL
 HAVING ultima_acao > 50
+
+-- :name membro-expulso
+-- :command :select
+-- :result :one
+-- :doc Retorna membro expulso de uma bolha se houver
+select *
+from bolhas_membros
+where foi_expulso = true
+  and user_id = :user_id
+  and bolha_id = :bolha_id
+  and deleted_at is null
+order by id asc
+limit  0, 1;
+
+-- :name membro-mais-antigo
+-- :command :select
+-- :result :one
+-- :doc Retorna membro ativo mais antigo de uma bolha
+select *
+from bolhas_membros
+where foi_expulso = false
+  and checkout is null
+  and bolha_id = :bolha_id
+  and deleted_at is null
+order by id asc
+limit  0, 1;

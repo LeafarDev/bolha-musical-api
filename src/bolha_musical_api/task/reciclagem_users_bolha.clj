@@ -21,13 +21,13 @@
              (gfbol/remover-usuario-bolha (:bolha_id membro) (:user_id membro)))))
 
 (defjob ReciclagemUserBolhas
-        [ctx]
-        (let [lock-key (keyword (str "lock-id-" 1))]
-          (locking lock-key
-            (do (log/info "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-                (log/info "<---------------- DO::ReciclagemUserBolhas       ---------------->")
-                (dorun (exec))
-                (log/info "<---------------- FINISHED::ReciclagemUserBolhas ---------------->")))))
+  [ctx]
+  (let [lock-key (keyword (str "lock-id-" 1))]
+    (locking lock-key
+      (do (log/info "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+          (log/info "<---------------- DO::ReciclagemUserBolhas       ---------------->")
+          (dorun (exec))
+          (log/info "<---------------- FINISHED::ReciclagemUserBolhas ---------------->")))))
 
 (defn schecule-reciclagem
   [& m]

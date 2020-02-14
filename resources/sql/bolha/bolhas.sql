@@ -141,3 +141,10 @@ where id = :id;
 UPDATE bolhas
 SET    deleted_at = :agora
 WHERE  id = :id
+
+-- :name update-lider-bolha :! :n
+-- :command :update
+-- :doc Atualiza membro da bolha
+update bolhas
+set user_lider_id = :user_lider_id
+where id = :id;

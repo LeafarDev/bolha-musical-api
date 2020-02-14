@@ -36,6 +36,8 @@
            (cond
              (not (bolha-existe? nova-bolha-id))
              (not-found! {:message (translate (read-string (:language_code user)) :bubble-not-found)})
+             (gfbol/usuario-foi-expulso-bolha? nova-bolha-id user-id)
+             (precondition-failed! {:message (translate (read-string (:language_code user)) :cant-enter-bubble)})
              (ja-esta-na-bolha? nova-bolha-id user-id)
              (precondition-failed! {:message (translate (read-string (:language_code user)) :already-in-this-bubble)})
              (not (bolha-disponivel? nova-bolha-id user-id))
