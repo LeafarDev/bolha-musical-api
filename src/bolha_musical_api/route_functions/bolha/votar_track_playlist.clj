@@ -24,7 +24,7 @@
                         (conj {:user_id (:id user), :created_by (:id user), :created_at agora})
                         (dissoc :refletir_spotify))
         token (:spotify_access_token user) id-param-sptfy {:ids (:spotify_track_id track-interna)}
-        user-saved-bolha-key (str "saved-" (:spotify_access_token user))
+        user-saved-bolha-key (str "saved-" (:spotify_access_token user) "-" (:id bolha))
         votos-bolha-key (str "playlist-bolha-votos-" (:id bolha))]
     (when-not (= (:id bolha) (:bolha_id track-interna))
       (log/info id-param-sptfy)

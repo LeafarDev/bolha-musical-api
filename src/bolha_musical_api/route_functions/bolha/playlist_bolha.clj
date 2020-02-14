@@ -14,7 +14,7 @@
 (defn- prepare-playlist
   [bolha-id spotify-access-token language]
   (if-let [playlist (not-empty (rmember (str "playlist-bolha-" bolha-id) 3600 #(relacionar-tracks-local-com-spotify bolha-id spotify-access-token)))]
-    (let [user-saved-tracks (relacionar-tracks-playlist-user-saved playlist spotify-access-token)
+    (let [user-saved-tracks (relacionar-tracks-playlist-user-saved playlist spotify-access-token bolha-id)
           votos (rmember (str "playlist-bolha-votos-" bolha-id) 3600 #(votos-tracks-playlist playlist))]
       (map conj playlist user-saved-tracks votos))
     (not-found! {:message (translate language :there-is-no-music)})))

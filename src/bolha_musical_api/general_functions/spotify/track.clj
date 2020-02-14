@@ -48,16 +48,16 @@
       (map conj tracks-spotify tracks-bancos-resumidas))))
 
 (defn check-users-saved-tracks
-  [tracks-ids spotify-access-token]
+  [tracks-ids spotify-access-token bolha-id]
   (let [pedacos-tracks (partition-by-max-sized-piece 50 tracks-ids)
-        relacao-curtidas (rmember (str "saved-" spotify-access-token) 60
+        relacao-curtidas (rmember (str "saved-" spotify-access-token "-" bolha-id) 60
                                   #(map (fn* [pedaco] (sptfy/check-users-saved-tracks {:ids (clojure.string/join "," pedaco)} spotify-access-token)) pedacos-tracks))]
     (map #(zipmap [:saved] [%]) (reduce concat relacao-curtidas))))
 
 (defn relacionar-tracks-playlist-user-saved
-  [tracks-playlist token]
+  [tracks-playlist token bolha-id]
   (let [ids (map :id (doall tracks-playlist))]
-    (check-users-saved-tracks ids token)))
+    (check-users-saved-tracks ids token bolha-id)))
 
 (defn votos-tracks-playlist
   [tracks-playlist]

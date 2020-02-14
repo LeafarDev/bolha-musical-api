@@ -8,9 +8,16 @@
             [bolha-musical-api.query-defs :as query]
             [bolha-musical-api.redis-defs :refer [wcar*]]
             [taoensso.carmine :as car :refer (wcar)]
-            [clj-spotify.core :as sptfy]
-            [clj-time.core :as t]
-            [clj-time.local :as l]))
+            [clj-spotify.core :as sptfy]))
+
+(defn- remove-cache-saved-membros
+  "Pego todos os membros e removo cache saved"
+  [bolha-id]
+  (let [membros-bolha (query/busca-membros-bolha query/db {:bolha_id bolha-id})]
+    (doseq [membro (doall membros-bolha)]
+      (do
+        (log/info (str "removendo cache -> " (str "saved-" (:spotify_access_token membro) "-" bolha-id)))
+        (wcar* (car/del (str "saved-" (:spotify_access_token membro) "-" bolha-id)))))))
 
 (defn adicionar-track-playlist
   "Adicionar uma nova track para playlist"
@@ -23,14 +30,15 @@
     (try (do
            (log/info (str "add " bolha-key))
            (query/adicionar-track-playlist
-            query/db {:bolha_id         (:id bolha-atual)
-                      :spotify_track_id track-id
-                      :duration_ms      (:duration_ms track)
-                      :current_playing  0
-                      :created_at       (df/nowMysqlFormat)})
+             query/db {:bolha_id         (:id bolha-atual)
+                       :spotify_track_id track-id
+                       :duration_ms      (:duration_ms track)
+                       :current_playing  0
+                       :created_at       (df/nowMysqlFormat)})
+           (remove-cache-saved-membros (:id bolha-atual))
            (wcar* (car/del bolha-key))
-           (wcar* (car/del votos-bolha-key)))
-         (ok {:message (translate (read-string (:language_code user)) :done)})
+           (wcar* (car/del votos-bolha-key))
+           (ok {:message (translate (read-string (:language_code user)) :done)}))
          (catch Exception e
            (log/error e)
            (internal-server-error! {:message (translate (read-string (:language_code (sat/extract-user request)))
