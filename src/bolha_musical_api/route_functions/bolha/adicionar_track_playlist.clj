@@ -30,11 +30,11 @@
     (try (do
            (log/info (str "add " bolha-key))
            (query/adicionar-track-playlist
-             query/db {:bolha_id         (:id bolha-atual)
-                       :spotify_track_id track-id
-                       :duration_ms      (:duration_ms track)
-                       :current_playing  0
-                       :created_at       (df/nowMysqlFormat)})
+            query/db {:bolha_id         (:id bolha-atual)
+                      :spotify_track_id track-id
+                      :duration_ms      (:duration_ms track)
+                      :current_playing  0
+                      :created_at       (df/nowMysqlFormat)})
            (remove-cache-saved-membros (:id bolha-atual))
            (wcar* (car/del bolha-key))
            (wcar* (car/del votos-bolha-key))

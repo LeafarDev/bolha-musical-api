@@ -6,6 +6,7 @@ CREATE TABLE IF NOT EXISTS bolhas
     rocket_chat_canal_id varchar(100) null,
     cor varchar(20) null,
     eh_fixa tinyint(1) default 0 not null,
+    apenas_lider_adiciona_track tinyint(1) default 0 not null,
     user_id_referencia_raio int null, /* se for fixo não precisa */
     referencia_raio_fixo POINT null, /* utilizado quando for bolha fixa*/
     tamanho_bolha_referencia_id int default 1,

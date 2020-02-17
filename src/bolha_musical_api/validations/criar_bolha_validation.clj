@@ -10,6 +10,8 @@
 ;                            :less-than 2 :is-not-less-than ":between 0 1"
 ;                            :greater-than 0 :is-not-greater-than ":between 0 1"}
 (metis/defvalidator rule
+  [:apenas_lider_adiciona_track [:presence {:message ":field-required"}]
+   ['metis-bool? {:message ":wrong-formatting"}]]
   [:eh_fixa [:presence {:message ":field-required"}]
    ['metis-bool? {:message ":wrong-formatting"}]]
   [:apelido [:presence {:message ":field-required"}

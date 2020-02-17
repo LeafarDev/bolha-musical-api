@@ -95,6 +95,7 @@ INSERT INTO bolhas
              tamanho_bolha_referencia_id,
              user_lider_id,
              cor,
+             apenas_lider_adiciona_track,
              rocket_chat_canal_id)
 VALUES      (:referencia,
              :apelido,
@@ -103,6 +104,7 @@ VALUES      (:referencia,
              :tamanho_bolha_referencia_id,
              :user_lider_id,
              :cor,
+             :apenas_lider_adiciona_track,
              :rocket_chat_canal_id);
 
 -- :name get-bolhas-ativas
