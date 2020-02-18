@@ -27,19 +27,18 @@
         bolha-key (str "playlist-bolha-" (:id bolha-atual))
         votos-bolha-key (str "playlist-bolha-votos-" (:id bolha-atual))
         track (sptfy/get-a-track {:id track-id} (:spotify_access_token user))]
-    (try (do
-           (log/info (str "add " bolha-key))
-           (query/adicionar-track-playlist
-            query/db {:bolha_id         (:id bolha-atual)
-                      :spotify_track_id track-id
-                      :duration_ms      (:duration_ms track)
-                      :current_playing  0
-                      :created_at       (df/nowMysqlFormat)})
-           (remove-cache-saved-membros (:id bolha-atual))
-           (wcar* (car/del bolha-key))
-           (wcar* (car/del votos-bolha-key))
-           (ok {:message (translate (read-string (:language_code user)) :done)}))
-         (catch Exception e
-           (log/error e)
-           (internal-server-error! {:message (translate (read-string (:language_code (sat/extract-user request)))
-                                                        :failed-to-create-track)})))))
+    (if (or (false? (:apenas_lider_adiciona_track bolha-atual))
+            (and (true? (:apenas_lider_adiciona_track bolha-atual)) (= (:id user) (:user_lider_id bolha-atual))))
+      (do (log/info (str "add " bolha-key))
+          (query/adicionar-track-playlist
+           query/db {:bolha_id         (:id bolha-atual)
+                     :spotify_track_id track-id
+                     :duration_ms      (:duration_ms track)
+                     :current_playing  0
+                     :created_at       (df/nowMysqlFormat)})
+          (remove-cache-saved-membros (:id bolha-atual))
+          (wcar* (car/del bolha-key))
+          (wcar* (car/del votos-bolha-key))
+          (ok {:message (translate (read-string (:language_code user)) :done)}))
+      (precondition-failed! {:message (translate (read-string (:language_code (sat/extract-user request)))
+                                                 :error)}))))
