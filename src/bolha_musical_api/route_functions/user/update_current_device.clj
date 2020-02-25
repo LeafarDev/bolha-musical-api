@@ -14,7 +14,7 @@
   "Atualizo e retorno lista de devices do usuário"
   [request]
   (let [user (sat/extract-user request) data (:body-params request)
-        old-device (:device_id user)]
+        old-device (:spotify_current_device user)]
     (query/update-user-spotify-current-device query/db {:spotify_current_device (:device_id data) :id (:id user)})
     (sptfy/transfer-current-users-playback {:device_ids [(:device_id data)]} (:spotify_access_token user))
     (when (nil? old-device)
