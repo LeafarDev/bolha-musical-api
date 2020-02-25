@@ -37,6 +37,10 @@
   [date1, date2]
   (= date1 (t/latest date1 date2)))
 
+(defn intervalo-milissegundos
+  [date1 date2]
+  (t/in-millis (t/interval date1 date2)))
+
 (defn intervalo-minutos
   [date1 date2]
   (t/in-minutes (t/interval date1 date2)))

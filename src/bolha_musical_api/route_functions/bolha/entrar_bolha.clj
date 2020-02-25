@@ -7,6 +7,7 @@
             [clojure.set :refer :all]
             [bolha-musical-api.route-functions.bolha.bolha-atual-usuario :as rfbau]
             [bolha-musical-api.general-functions.spotify.bolha :as gfbol]
+            [bolha-musical-api.general-functions.spotify.track :as gftrack]
             [bolha-musical-api.locale.dicts :refer [translate]]
             [bolha-musical-api.query-defs :as query]))
 
@@ -46,6 +47,7 @@
              (try (when-not (nil? bolha-antiga)
                     (gfbol/remover-usuario-bolha (:id bolha-antiga) user-id))
                   (gfbol/adicionar-usuario-bolha nova-bolha-id user-id)
+                  (gftrack/resumir-track-user user-id)
                   (rfbau/bolha-atual-usuario request)
                   (catch Exception e
                     (log/error e)

@@ -20,6 +20,30 @@ WHERE  bolhas_membros.bolha_id = :bolha_id
        AND bolhas_membros.deleted_at IS NULL
        AND bolhas_membros.checkout IS NULL
 
+-- :name busca-membro-by-user-id
+-- :command :select
+-- :result :one
+-- :doc Busca membro pelo id do usuário
+SELECT bolhas_membros.*,
+       ST_X(users.ultima_localizacao) as latitude ,
+       ST_Y(users.ultima_localizacao) as longitude,
+       users.spotify_access_token,
+       users.spotify_current_device,
+       users.data_ultima_localizacao,
+       users.mostrar_localizacao_mapa,
+       users.tocar_track_automaticamente
+FROM   bolhas_membros
+       JOIN bolhas
+         ON bolhas.id = bolhas_membros.bolha_id
+            AND bolhas.deleted_at IS NULL
+       JOIN users
+         ON users.id = bolhas_membros.user_id
+            AND users.id = :user_id
+            AND users.deleted_at IS NULL
+WHERE  bolhas_membros.bolha_id = :bolha_id
+       AND bolhas_membros.deleted_at IS NULL
+       AND bolhas_membros.checkout IS NULL
+
 -- :name insert-membro-bolha :! :n
 -- :command :insert
 -- :doc Insiro um usuário como membro em uma bolha
