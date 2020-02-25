@@ -6,15 +6,19 @@
             [bolha-musical-api.general-functions.spotify.access-token :as sat]
             [bolha-musical-api.locale.dicts :refer [translate]]
             [bolha-musical-api.redis-defs :refer [wcar*]]
+            [bolha-musical-api.general-functions.spotify.track :as gftrack]
             [taoensso.carmine :as car :refer (wcar)]
             [clojure.set :refer :all]))
 
 (defn update-current-device
   "Atualizo e retorno lista de devices do usuário"
   [request]
-  (let [user (sat/extract-user request) data (:body-params request)]
+  (let [user (sat/extract-user request) data (:body-params request)
+        old-device (:device_id user)]
     (query/update-user-spotify-current-device query/db {:spotify_current_device (:device_id data) :id (:id user)})
     (sptfy/transfer-current-users-playback {:device_ids [(:device_id data)]} (:spotify_access_token user))
+    (when (nil? old-device)
+      (gftrack/resumir-track-user (:id user)))
     (wcar* (car/del (str "get-current-users-available-devices-" (:id user))))
     (ok {:message (translate (read-string (:language_code user)) :done)})))
 
