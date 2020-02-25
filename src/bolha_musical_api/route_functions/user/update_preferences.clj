@@ -5,6 +5,7 @@
             [bolha-musical-api.query-defs :as query]
             [bolha-musical-api.general-functions.spotify.access-token :as sat]
             [bolha-musical-api.locale.dicts :refer [translate]]
+            [bolha-musical-api.general-functions.spotify.track :as gftrack]
             [clojure.tools.logging :as log]))
 
 (defn- corrige-language-code
@@ -23,6 +24,9 @@
            (when (false? (:tocar_track_automaticamente novas-preferencias))
              (sptfy/pause-a-users-playback {} (:spotify_access_token user)))
            (query/update-user-preferences query/db prep-data)
+           (when (and (true? (:tocar_track_automaticamente novas-preferencias))
+                      (false? (:tocar_track_automaticamente user)))
+             (gftrack/resumir-track-user (:id user)))
            (ok {:message (translate (read-string (:language_code (sat/extract-user request))) :done)})
            (catch Exception e
              (log/error e)

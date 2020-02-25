@@ -176,13 +176,13 @@
 (defn start-or-resume-a-users-playback-with-position-ms
   "top tracks do usuário"
   [device_id uri position_ms user-token]
-  (try (-> "https://api.spotify.com/v1/me/player/play"
-           (client/put {:headers      {:Authorization (str "Bearer " user-token)}
-                        :as           :json
-                        :content-type :json
-                        :query-params {:device_id device_id}
-                        :form-params  {:uris        [uri]
-                                       :position_ms position_ms}}))
+  (try (client/put "https://api.spotify.com/v1/me/player/play"
+                   {:as           :json,
+                    :headers      {:Authorization (str "Bearer " user-token)},
+                    :form-params  {:position_ms position_ms,
+                                   :uris        [uri]},
+                    :query-params {:device_id device_id},
+                    :content-type :json})
        (catch Exception e (log/error e "There was an error in start-or-resume-a-users-playback-with-position-ms"))))
 
 (defn- processa-track-membro
@@ -209,17 +209,18 @@
       (let [sincronizadas (sincronizar-tempo-tracks playlist)]
         (if-let [track-atualmente-tocando (not-empty (atualmente-tocando sincronizadas))]
           (let [device-id (device-id-or-first-existent-id membro-user)]
-            (log/info (str "VAMOS VOLTAR A PILANTRAGEM::"
-                           (:spotify_track_id track-atualmente-tocando) " | "
-                           (:id track-atualmente-tocando) " | "
-                           device-id " | "
-                           (:spotify_access_token user) " |_ "
-                           (:current-position-ms track-atualmente-tocando)))
-            (processa-track-membro (:spotify_track_id track-atualmente-tocando)
-                                   (:id track-atualmente-tocando)
-                                   device-id
-                                   (:spotify_access_token user)
-                                   (:current-position-ms track-atualmente-tocando))))))))
+            (when-not (false? (:tocar_track_automaticamente membro-user))
+              (log/info (str "VAMOS VOLTAR A PILANTRAGEM::"
+                             (:spotify_track_id track-atualmente-tocando) " | "
+                             (:id track-atualmente-tocando) " | "
+                             device-id " | "
+                             (:spotify_access_token user) " |_ "
+                             (:current-position-ms track-atualmente-tocando)))
+              (processa-track-membro (:spotify_track_id track-atualmente-tocando)
+                                     (:id track-atualmente-tocando)
+                                     device-id
+                                     (:spotify_access_token user)
+                                     (:current-position-ms track-atualmente-tocando)))))))))
 
 (defn tocar-track-para-membros
   [track-id bolha-id track-id-interno]

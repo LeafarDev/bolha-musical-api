@@ -41,7 +41,7 @@
                                  (log/info "running viena:: " (proxima sincronizadas (:id atualmente-tocando)))
                                  (dorun (tocar-track-para-membros (:spotify_track_id proxima) (:id bolha) (:id proxima)))
                                  true))))
-                       (log/info "NADA ATUALMENTE TOCANDO:: " sincronizadas))))))
+                       (log/info "NADA ATUALMENTE TOCANDO:: "))))))
     (log/info "sem bolhas")))
 
 (defjob SyncPlaylistUsersJob
