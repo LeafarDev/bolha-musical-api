@@ -1,9 +1,11 @@
 (ns bolha-musical-api.general-functions.date-formatters
   (:require
-   [clj-time.core :as t]
-   [clj-time.local :as l]
-   [clj-time.format :as f]))
-
+    [clj-time.core :as t]
+    [clj-time.local :as l]
+    [clj-time.format :as f]
+    [clojure.tools.logging :as log])
+  (:import [org.joda.time DateTimeZone LocalDateTime]))
+(DateTimeZone/setDefault (DateTimeZone/forID "Etc/UCT"))
 (def multi-format
   (f/formatter t/utc
                "YYYY-MM-dd"
@@ -15,15 +17,20 @@
 
 (defn parse-mysql-date-time-format
   [date]
-  (clj-time.format/unparse (clj-time.format/formatter "yyyy-MM-dd H:mm:ss") date))
+  (clj-time.format/unparse (clj-time.format/formatter-local "yyyy-MM-dd H:mm:ss") date))
+
+(defn local-now
+  "Returns a DateTime for the current instant in the default time zone."
+  []
+  (parse (.toString (LocalDateTime/now (DateTimeZone/forID "Etc/UCT")) "yyyy-MM-dd H:mm:ss")))
 
 (defn nowMysqlFormat
   []
-  (parse-mysql-date-time-format (l/local-now)))
+  (parse-mysql-date-time-format (local-now)))
 
 (defn agora-add-minutos
   [minutos]
-  (t/plus (l/local-now) (t/minutes minutos)))
+  (t/plus (local-now) (t/minutes minutos)))
 
 (defn meses-em-segundos
   [meses]

@@ -9,11 +9,14 @@
             [bolha-musical-api.general-functions.date-formatters :as df]
             [clj-time.coerce :as c]
             [com.climate.claypoole :as cp]
+            [clj-time.core :as t]
             [bolha-musical-api.redis-defs :refer [wcar*]]
             [bolha-musical-api.util :refer [rmember]]
             [taoensso.carmine :as car :refer (wcar)]
             [clojure.set :refer :all]
-            [clojure.tools.logging :as log]))
+            [clojure.tools.logging :as log])
+  (:import [org.joda.time DateTimeZone DateTime]))
+(DateTimeZone/setDefault (DateTimeZone/forID "Etc/UCT"))
 
 (defn nenhuma-tocando?
   [playlist]
@@ -123,20 +126,17 @@
   [started-at duration-ms]
   ;;; quem sabe eu possa começar a chamar a pŕoxima música faltando um segundo pra diminuir a falta de sincronia ?
   (try (let [ends-at (time-clj/plus started-at (time-clj/millis duration-ms))]
-         (if (df/date-greater? (l/local-now) ends-at)
-           (do (log/warn "TERMINOU::::"
-                         (df/date-greater? (l/local-now) ends-at)
-                         (l/local-now) ends-at)
-               true)
-           (log/info (str "NÃO TERMINOU::::" started-at duration-ms))))
+         (if (df/date-greater? (df/local-now) ends-at)
+           true
+           (log/info (str "NÃO TERMINOU::::" started-at duration-ms (t/default-time-zone)))))
        (catch Exception e
          (log/error e))))
 
 (defn set-time-first-track
   [first-track]
   (try (-> first-track
-           (assoc :start-at (l/local-now))
-           (assoc :end-at (time-clj/plus (l/local-now) (time-clj/millis (:duration_ms first-track)))))
+           (assoc :start-at (df/local-now))
+           (assoc :end-at (time-clj/plus (df/local-now) (time-clj/millis (:duration_ms first-track)))))
        (catch Exception e
          (log/error e))))
 
@@ -144,14 +144,17 @@
   [previous-track current-track]
   (try
     (let [track-sincronizada (as-> current-track track
-                               (assoc track :start-at (time-clj/plus (:end-at previous-track) (time-clj/millis 200)))
+                                   (assoc track :start-at (time-clj/plus (:end-at previous-track) (time-clj/millis 200)))
 
-                               (assoc track :end-at (time-clj/plus
-                                                     (time-clj/plus (:end-at previous-track) (time-clj/millis 200))
-                                                     (time-clj/millis (:duration_ms previous-track)))))]
+                                   (assoc track :end-at (time-clj/plus
+                                                          (time-clj/plus (:end-at previous-track) (time-clj/millis 200))
+                                                          (time-clj/millis (:duration_ms previous-track)))))]
       (if (= 1 (:current_playing current-track))
+        (do
+          (log/info (str (c/from-sql-date (:started_at track-sincronizada)) "<________________________________________________________________________>"
+                       (df/local-now)))
         (assoc track-sincronizada :current-position-ms (df/intervalo-milissegundos (c/from-sql-date (:started_at track-sincronizada))
-                                                                                   (l/local-now)))
+                                                                                   (df/local-now))))
         track-sincronizada))
     (catch Exception e
       (log/error ":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::")
@@ -171,7 +174,11 @@
 
 (defn membro-esta-sumido?
   [data_ultima_localizacao]
-  (>= 30 (df/intervalo-segundos (c/from-sql-date data_ultima_localizacao) (l/local-now))))
+  (do
+    (log/info (str "sumido ?? ("   (>= (df/intervalo-segundos (c/from-sql-date data_ultima_localizacao) (df/local-now)) 30) ")"
+                   "interval(" (df/intervalo-segundos (c/from-sql-date data_ultima_localizacao) (df/local-now)) ")"
+                   (df/local-now) "----" (c/from-sql-date data_ultima_localizacao)))
+    (>= (df/intervalo-segundos (c/from-sql-date data_ultima_localizacao) (df/local-now)) 30)))
 
 (defn start-or-resume-a-users-playback-with-position-ms
   "top tracks do usuário"
@@ -209,7 +216,7 @@
       (let [sincronizadas (sincronizar-tempo-tracks playlist)]
         (if-let [track-atualmente-tocando (not-empty (atualmente-tocando sincronizadas))]
           (let [device-id (device-id-or-first-existent-id membro-user)]
-            (when-not (false? (:tocar_track_automaticamente membro-user))
+            (when (true? (:tocar_track_automaticamente membro-user))
               (log/info (str "VAMOS VOLTAR A PILANTRAGEM::"
                              (:spotify_track_id track-atualmente-tocando) " | "
                              (:id track-atualmente-tocando) " | "
@@ -231,12 +238,18 @@
     (del-key bolha-key)
     (del-key votos-bolha-key)
     (cp/pfor 4 [membro membros]
-             (log/warn (str (membro-esta-sumido? (:data_ultima_localizacao membro))
-                            (:tocar_track_automaticamente membro)))
-             (when-not (and (membro-esta-sumido? (:data_ultima_localizacao membro))
-                            (false? (:tocar_track_automaticamente membro)))
+             (when (and (false? (membro-esta-sumido? (:data_ultima_localizacao membro)))
+                        (true? (:tocar_track_automaticamente membro)))
                (let [device-id (device-id-or-first-existent-id membro)]
                  (when-not (nil? device-id)
                    (log/info (str track-id " " track-id-interno " " device-id " " (:spotify_access_token membro)))
                    (processa-track-membro track-id track-id-interno device-id (:spotify_access_token membro))))))))
 
+(defn tocar-proxima-track
+  [track-atualmente-tocando sincronizadas bolha-id]
+  (do (query/atualiza-para-nao-execucao-track query/db (select-keys track-atualmente-tocando [:id]))
+      (if-let [proxima (not-empty (proxima sincronizadas (:id track-atualmente-tocando)))]
+        (when-not (precisa-ser-skipada? (:id proxima) bolha-id)
+          (log/info "running viena:: " (proxima sincronizadas (:id track-atualmente-tocando)))
+          (dorun (tocar-track-para-membros (:spotify_track_id proxima) bolha-id (:id proxima)))
+          true))))

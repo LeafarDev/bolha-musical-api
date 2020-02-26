@@ -16,11 +16,11 @@
 
 (defn- falta-cinco-minutos-ou-menos?
   [spotify-token-expires-at]
-  (>= 5 (df/intervalo-minutos (l/local-now) spotify-token-expires-at)))
+  (>= 5 (df/intervalo-minutos (df/local-now) spotify-token-expires-at)))
 
 (defn- ja-expirou?
   [spotify-token-expires-at]
-  (df/date-greater? (l/local-now) spotify-token-expires-at))
+  (df/date-greater? (df/local-now) spotify-token-expires-at))
 
 (defn sptfy-refresh-tk-mw
   "Pego o usuário apartir do token, e verifico se é preciso utilizar refresh

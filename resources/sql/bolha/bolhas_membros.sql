@@ -131,7 +131,7 @@ SELECT bolhas_membros.*,
        users.data_ultima_localizacao,
        users.mostrar_localizacao_mapa,
        users.tocar_track_automaticamente,
-       TIMESTAMPDIFF(MINUTE , data_ultima_localizacao, now()) AS ultima_acao
+       TIMESTAMPDIFF(MINUTE , data_ultima_localizacao, :agora) AS ultima_acao
 FROM   users
        JOIN bolhas
          ON bolhas.deleted_at IS NULL

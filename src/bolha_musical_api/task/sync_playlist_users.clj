@@ -7,21 +7,22 @@
             [clojurewerkz.quartzite.jobs :refer [defjob]]
             [clojurewerkz.quartzite.schedule.simple :refer [schedule repeat-forever with-interval-in-milliseconds]]
             [bolha-musical-api.general-functions.spotify.track :refer [sincronizar-tempo-tracks
-                                                                       track-terminou?
                                                                        tocar-track-para-membros
                                                                        nenhuma-tocando?
                                                                        precisa-ser-skipada?
                                                                        track-terminou?
                                                                        primeira-track-nao-tocada
                                                                        atualmente-tocando
-                                                                       proxima]]
+                                                                       proxima
+                                                                       tocar-proxima-track]]
             [com.climate.claypoole :as cp]
             [clj-time.coerce :as c]
             [bolha-musical-api.query-defs :as query]
             [clojure.tools.logging :as log]
             [bolha-musical-api.task.reciclagem_users_bolha :as taskrecicla]
-            [bolha-musical-api.redis-defs :refer [wcar*]]))
-
+            [bolha-musical-api.redis-defs :refer [wcar*]])
+  (:import [org.joda.time DateTimeZone]))
+(DateTimeZone/setDefault (DateTimeZone/forID "Etc/UCT"))
 (defn- exec []
   (if-let [bolhas-ativas (not-empty (query/get-bolhas-ativas query/db))]
     (cp/pfor 4 [bolha bolhas-ativas]                        ;;; talvez desnecessário
@@ -34,36 +35,33 @@
                      (if-let [atualmente-tocando (not-empty (atualmente-tocando sincronizadas))]
                        (do (log/info (str "FEVEREIRO TEM CARNAVAL"))
                            (when (or (precisa-ser-skipada? (:id atualmente-tocando) (:id bolha))
-                                     (track-terminou? (c/from-sql-date (:started_at atualmente-tocando)) (:duration_ms atualmente-tocando)))
-                             (query/atualiza-para-nao-execucao-track query/db (select-keys atualmente-tocando [:id]))
-                             (if-let [proxima (not-empty (proxima sincronizadas (:id atualmente-tocando)))]
-                               (when-not (precisa-ser-skipada? (:id proxima) (:id bolha))
-                                 (log/info "running viena:: " (proxima sincronizadas (:id atualmente-tocando)))
-                                 (dorun (tocar-track-para-membros (:spotify_track_id proxima) (:id bolha) (:id proxima)))
-                                 true))))
+                                     (track-terminou? (c/from-sql-date (:started_at atualmente-tocando))
+                                                      (:duration_ms atualmente-tocando)))
+                             (tocar-proxima-track atualmente-tocando sincronizadas (:id bolha))))
                        (log/info "NADA ATUALMENTE TOCANDO:: "))))))
     (log/info "sem bolhas")))
 
 (defjob SyncPlaylistUsersJob
-  [ctx]
-  (let [lock-key (keyword (str "lock-id-" 1))]
-    (locking lock-key
-      (do (log/info "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-          (log/info "<---------------- DO::SyncPlaylistUsersJob       ---------------->")
-          (dorun (exec))
-          (log/info "<---------------- FINISHED::SyncPlaylistUsersJob ---------------->")))))
+        [ctx]
+        (let [lock-key (keyword (str "lock-id-" 1))]
+          (locking lock-key
+            (do (log/info "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+                (log/info "<---------------- DO::SyncPlaylistUsersJob       ---------------->")
+                (dorun (exec))
+                (log/info "<---------------- FINISHED::SyncPlaylistUsersJob ---------------->")))))
+
 (defn go
   [& m]
   (let [s (qs/start (qs/initialize))
         job (j/build
-             (j/of-type SyncPlaylistUsersJob)
-             (j/with-identity (j/key "jobs.SyncPlaylistUsers.1")))
+              (j/of-type SyncPlaylistUsersJob)
+              (j/with-identity (j/key "jobs.SyncPlaylistUsers.1")))
         trigger (t/build
-                 (t/with-identity (t/key "triggers.1"))
-                 (t/start-now)
-                 (t/with-schedule (schedule
-                                   (repeat-forever)
-                                   (with-interval-in-milliseconds 11000))))]
+                  (t/with-identity (t/key "triggers.1"))
+                  (t/start-now)
+                  (t/with-schedule (schedule
+                                     (repeat-forever)
+                                     (with-interval-in-milliseconds 11000))))]
     (qs/schedule s job trigger)))
 
 (defn init []

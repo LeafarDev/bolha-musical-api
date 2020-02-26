@@ -13,13 +13,14 @@
   "Remove usuário da bolha e de seu chat"
   ([bolha-id user-id] (remover-usuario-bolha bolha-id user-id false))
   ([bolha-id user-id expulso]
-   (let [bolha (query/get-bolha-by-id query/db {:id bolha-id}) user (query/get-user-by-id query/db {:id user-id})
+   (let [bolha (query/get-bolha-by-id query/db {:id bolha-id})
+         user (query/get-user-by-id query/db {:id user-id})
          membros (query/busca-membros-bolha query/db {:bolha_id bolha-id})]
      (rocket/remover-usuario-canal (:rocket_chat_canal_id bolha) (:rocket_chat_id user))
      (query/remove-usuario-bolha query/db {:checkout    (df/nowMysqlFormat),
                                            :user_id     user-id
                                            :foi_expulso expulso})
-     (when (and (> 1 (count membros)) (= (:user_lider_id bolha) user-id))
+     (when (and (> (count membros) 1) (= (:user_lider_id bolha) user-id))
        (definir-novo-lider-bolha bolha-id))
      (when (= 1 (count membros))
        (query/remover-bolha query/db {:id    (:id bolha)

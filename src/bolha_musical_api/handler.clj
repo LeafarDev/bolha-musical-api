@@ -5,7 +5,9 @@
             [bolha-musical-api.routes.bolha :refer :all]
             [schema.core :as s]
             [taoensso.timbre :as timbre]
-            [clojure.tools.logging :as log]))
+            [clojure.tools.logging :as log])
+  (:import [org.joda.time DateTimeZone]))
+(DateTimeZone/setDefault (DateTimeZone/forID "Etc/UCT"))
 (timbre/set-level! :info)
 (timbre/merge-config! {:level :info})
 ;;; blacklist: ["io.pedestal.*" "org.eclipse.jetty.*"]

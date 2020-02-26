@@ -1,7 +1,7 @@
 -- :name get-bolhas
 -- :command :select
 -- :result :one
--- :doc Busca bolha pelo seu id
+-- :doc Busca bolhas
 select bolhas.*,
    St_x(bolhas.referencia_raio_fixo)       as latitude,
    St_y(bolhas.referencia_raio_fixo)       as longitude,

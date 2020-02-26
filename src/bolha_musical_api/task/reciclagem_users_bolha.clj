@@ -5,17 +5,19 @@
             [clojurewerkz.quartzite.triggers :as t]
             [clojurewerkz.quartzite.jobs :as j]
             [clojurewerkz.quartzite.jobs :refer [defjob]]
+            [bolha-musical-api.general-functions.date-formatters :as df]
             [clojurewerkz.quartzite.schedule.simple :refer [schedule repeat-forever with-interval-in-milliseconds]]
             [bolha-musical-api.query-defs :as query]
             [com.climate.claypoole :as cp]
-            [bolha-musical-api.general-functions.date-formatters :as df]
             [bolha-musical-api.general-functions.spotify.bolha :as gfbol]
-            [clojure.tools.logging :as log]))
+            [clojure.tools.logging :as log])
+  (:import [org.joda.time DateTimeZone]))
+(DateTimeZone/setDefault (DateTimeZone/forID "Etc/UCT"))
 
 (defn- exec
   []
   (let [membros-fora-range (query/busca-membros-fora-range-bolha query/db {})
-        membros-inativos (query/busca-membros-inativos-bolha query/db {})
+        membros-inativos (query/busca-membros-inativos-bolha query/db {:agora (df/nowMysqlFormat)})
         membros (distinct (concat membros-fora-range (map #(dissoc % :ultima_acao) membros-inativos)))]
     (cp/pfor 4 [membro membros]
              (gfbol/remover-usuario-bolha (:bolha_id membro) (:user_id membro)))))

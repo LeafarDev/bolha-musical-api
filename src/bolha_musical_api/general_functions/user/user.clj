@@ -12,16 +12,17 @@
   [email]
   (when-let [user (not-empty (query/get-user-by-email query/db {:email email}))]
     user))
+
 (defn get-user-by-state
   "Busco um usuário pelo seu state"
   [state]
   (when-let [user (not-empty (query/get-user-by-state query/db {:state state}))]
     user))
+
 (defn expire-at-handle
   "Conversão do expire_in recebido do spotify"
   [expires-in]
   (df/parse-mysql-date-time-format (df/agora-add-minutos (df/segundos-para-minutos expires-in))))
-(expire-at-handle 3600)
 
 (defn converte-user-me-spotify-em-dado-local
   "Pego '/me' do spotify e transformo em mapa compativel com dados do banco"

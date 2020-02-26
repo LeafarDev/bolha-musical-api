@@ -12,6 +12,7 @@ services:
       - MYSQL_DATABASE=bolha_musical
       - MYSQL_USER=bolha_musical
       - MYSQL_PASSWORD=123456
+      - TZ=Etc/UCT
     ports:
       - "4442:3306"
   mysql-test:

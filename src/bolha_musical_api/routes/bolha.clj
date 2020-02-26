@@ -15,6 +15,7 @@
             [bolha-musical-api.validations.criar-bolha-validation :refer [criar-bolha-validate]]
             [bolha-musical-api.route-functions.bolha.bolhas-disponiveis :as rfbp]
             [bolha-musical-api.route-functions.bolha.bolha-referencias-tamanhos :as rfgref]
+            [bolha-musical-api.route-functions.bolha.skip-track :as rfskip]
             [bolha-musical-api.route-functions.bolha.adicionar-track-playlist :as rfatp]
             [bolha-musical-api.route-functions.bolha.votar-track-playlist :as rfvot]
             [bolha-musical-api.route-functions.bolha.current-playing :as rfcp]
@@ -49,6 +50,10 @@
       :body-params [id :- String]
       :summary "Insere uma track em uma bolha"
       (rfatp/adicionar-track-playlist request id))
+    (POST "/playlist/skip" request
+      :middleware [token-auth-mw cors-mw authenticated-mw sptfy-refresh-tk-mw]
+      :summary "Pula musica atual"
+      (rfskip/skip-track request))
     (POST "/playlist/track/votar" request
       :middleware [token-auth-mw cors-mw authenticated-mw sptfy-refresh-tk-mw votar-track-playlist-validate]
       :summary "Insere uma track em uma bolha"
@@ -66,6 +71,7 @@
       :body-params [id :- Integer]
       :summary "Insere um usuário em uma bolha"
       (rfebol/entrar-bolha request id))
+
     (POST "/sair" request
       :middleware [token-auth-mw cors-mw authenticated-mw sptfy-refresh-tk-mw]
       :summary "Remove usuário da bolha"
