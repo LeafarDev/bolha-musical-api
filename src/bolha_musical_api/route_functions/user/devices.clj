@@ -15,7 +15,7 @@
   (let [user (sat/extract-user request)
         devices-result (rmember (str "get-current-users-available-devices-" (:id user))
                                 5
-                                (fn* [] (sptfy/get-current-users-available-devices {} (:spotify_access_token user))))]
+                                #(sptfy/get-current-users-available-devices {} (:spotify_access_token user)))]
     (when (empty? (:devices devices-result))
       (query/update-user-spotify-current-device query/db {:spotify_current_device nil, :id (:id user)}))
     (ok (:devices devices-result))))
