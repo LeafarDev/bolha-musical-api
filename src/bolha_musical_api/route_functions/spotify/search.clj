@@ -13,5 +13,5 @@
   (let [user (sat/extract-user request)]
     ; TODO validar a resposta do spotify, não dá exception na call mesmo dando 401
     (if (not-empty query)
-      (ok (:tracks (rmember (str "search-" query) 3600 #(sptfy/search {:q query :type "track" :market "BR" :limit 30 :offset 0} (:spotify_access_token user)))))
+      (ok (:tracks (rmember (str "search-" query) 3600 #(sptfy/search {:q query :type "track" :market "BR" :limit 50 :offset 0} (:spotify_access_token user)))))
       (ok (rmember (str "get-user-top-tracks-" (:id user)) 7200 #(gftrack/get-user-top-tracks (:spotify_access_token user)))))))
