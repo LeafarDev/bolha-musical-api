@@ -19,28 +19,29 @@
   (let [membros-fora-range (query/busca-membros-fora-range-bolha query/db {})
         membros-inativos (query/busca-membros-inativos-bolha query/db {:agora (df/nowMysqlFormat)})
         membros (distinct (concat membros-fora-range (map #(dissoc % :ultima_acao) membros-inativos)))]
-    (cp/pfor 4 [membro membros]
-             (gfbol/remover-usuario-bolha (:bolha_id membro) (:user_id membro)))))
+    (when (> 1 (count membros))
+      (cp/pfor 4 [membro membros]
+               (gfbol/remover-usuario-bolha (:bolha_id membro) (:user_id membro))))))
 
 (defjob ReciclagemUserBolhas
-  [ctx]
-  (let [lock-key (keyword (str "lock-id-" 1))]
-    (locking lock-key
-      (do (log/info "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-          (log/info "<---------------- DO::ReciclagemUserBolhas       ---------------->")
-          (dorun (exec))
-          (log/info "<---------------- FINISHED::ReciclagemUserBolhas ---------------->")))))
+        [ctx]
+        (let [lock-key (keyword (str "lock-id-" 1))]
+          (locking lock-key
+            (do (log/info "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+                (log/info "<---------------- DO::ReciclagemUserBolhas       ---------------->")
+                (dorun (exec))
+                (log/info "<---------------- FINISHED::ReciclagemUserBolhas ---------------->")))))
 
 (defn schecule-reciclagem
   [& m]
   (let [s (qs/start (qs/initialize))
         job (j/build
-             (j/of-type ReciclagemUserBolhas)
-             (j/with-identity (j/key "jobs.ReciclagemUserBolhas.1")))
+              (j/of-type ReciclagemUserBolhas)
+              (j/with-identity (j/key "jobs.ReciclagemUserBolhas.1")))
         trigger (t/build
-                 (t/with-identity (t/key "triggers.ReciclagemUserBolhas.1"))
-                 (t/start-now)
-                 (t/with-schedule (schedule
-                                   (repeat-forever)
-                                   (with-interval-in-milliseconds 5000))))]
+                  (t/with-identity (t/key "triggers.ReciclagemUserBolhas.1"))
+                  (t/start-now)
+                  (t/with-schedule (schedule
+                                     (repeat-forever)
+                                     (with-interval-in-milliseconds 5000))))]
     (qs/schedule s job trigger)))
