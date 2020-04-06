@@ -5,7 +5,8 @@
             [bolha-musical-api.query-defs :as query]
             [bolha-musical-api.general-functions.user.user :as gfuser]
             [buddy.sign.jwt :as jwt]
-            [bolha-musical-api.util :as util]
+            [bolha-musical-api.redis-defs :refer [wcar*]]
+            [taoensso.carmine :as car :refer (wcar)]
             [clojure.tools.logging :as log]))
 
 (defn get-access-token-client
@@ -60,7 +61,8 @@
             juncao-trados-user-id (conj {:id (:id user)} dados-tratados-update)
             result-update (query/update-user-spotify-refresh-token query/db juncao-trados-user-id)
             usuario-atualizado (gfuser/get-user-by-email (:email user))]
-           true
+           (do (wcar* (car/del (str "me-" (:id user))))
+               true)
            (catch Exception e
              (log/error e "refresh-access-token")
              false)
