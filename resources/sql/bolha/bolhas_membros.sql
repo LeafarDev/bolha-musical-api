@@ -143,7 +143,7 @@ FROM   users
        JOIN referencias_tamanhos_bolhas
          ON referencias_tamanhos_bolhas.id = bolhas.tamanho_bolha_referencia_id
 WHERE  users.deleted_at IS NULL
-HAVING ultima_acao > 180
+HAVING ultima_acao > 900
 
 -- :name membro-expulso
 -- :command :select
