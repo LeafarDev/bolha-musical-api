@@ -144,17 +144,17 @@
   [previous-track current-track]
   (try
     (let [track-sincronizada (as-> current-track track
-                                   (assoc track :start-at (time-clj/plus (:end-at previous-track) (time-clj/millis 200)))
+                               (assoc track :start-at (time-clj/plus (:end-at previous-track) (time-clj/millis 200)))
 
-                                   (assoc track :end-at (time-clj/plus
-                                                          (time-clj/plus (:end-at previous-track) (time-clj/millis 200))
-                                                          (time-clj/millis (:duration_ms previous-track)))))]
+                               (assoc track :end-at (time-clj/plus
+                                                     (time-clj/plus (:end-at previous-track) (time-clj/millis 200))
+                                                     (time-clj/millis (:duration_ms previous-track)))))]
       (if (= 1 (:current_playing current-track))
         (do
           (log/info (str (c/from-sql-date (:started_at track-sincronizada)) "<________________________________________________________________________>"
-                       (df/local-now)))
-        (assoc track-sincronizada :current-position-ms (df/intervalo-milissegundos (c/from-sql-date (:started_at track-sincronizada))
-                                                                                   (df/local-now))))
+                         (df/local-now)))
+          (assoc track-sincronizada :current-position-ms (df/intervalo-milissegundos (c/from-sql-date (:started_at track-sincronizada))
+                                                                                     (df/local-now))))
         track-sincronizada))
     (catch Exception e
       (log/error ":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::")
@@ -175,10 +175,10 @@
 (defn membro-esta-sumido?
   [data_ultima_localizacao]
   (do
-    (log/info (str "sumido ?? ("   (>= (df/intervalo-segundos (c/from-sql-date data_ultima_localizacao) (df/local-now)) 30) ")"
+    (log/info (str "sumido ?? ("   (>= (df/intervalo-segundos (c/from-sql-date data_ultima_localizacao) (df/local-now)) 420) ")"
                    "interval(" (df/intervalo-segundos (c/from-sql-date data_ultima_localizacao) (df/local-now)) ")"
                    (df/local-now) "----" (c/from-sql-date data_ultima_localizacao)))
-    (>= (df/intervalo-segundos (c/from-sql-date data_ultima_localizacao) (df/local-now)) 30)))
+    (>= (df/intervalo-segundos (c/from-sql-date data_ultima_localizacao) (df/local-now)) 420)))
 
 (defn start-or-resume-a-users-playback-with-position-ms
   "top tracks do usuário"
